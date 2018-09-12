@@ -4,4 +4,4 @@ displayName = Chest Implants
 modReferences = HamstarHelpers@2.1.0
 buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
 languageVersion = 6
-homepage = https://github.com/hamstar0/tml-cheststuffer-mod
+homepage = https://github.com/hamstar0/tml-chestimplants-mod
