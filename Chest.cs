@@ -48,15 +48,15 @@ namespace ChestImplants {
 			case 51:
 				return "Marble Chest";
 			case 23:
-				return "Jungle Biome Chest";
+				return "Jungle Chest";
 			case 24:
-				return "Corruption Biome Chest";
+				return "Corruption Chest";
 			case 25:
-				return "Crimson Biome Chest";
+				return "Crimson Chest";
 			case 26:
-				return "Hallowed Biome Chest";
+				return "Hallowed Chest";
 			case 27:
-				return "Ice Biome Chest";
+				return "Frozen Chest";
 			default:
 				throw new KeyNotFoundException( "Frame: " + frame );
 			}
@@ -117,6 +117,7 @@ namespace ChestImplants {
 			chest.item[0] = new Item();
 			chest.item[0].SetDefaults( id );
 			chest.item[0].stack = amount;
+			chest.item[0].prefix = (byte)info.Prefix;
 
 			if( mymod.Config.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
