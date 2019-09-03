@@ -1,5 +1,4 @@
 ﻿using HamstarHelpers.Helpers.Debug;
-using HamstarHelpers.Helpers.DotNET.Extensions;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
