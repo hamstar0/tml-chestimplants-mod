@@ -1,62 +1,33 @@
-﻿using HamstarHelpers.Components.Config;
-using HamstarHelpers.Helpers.DebugHelpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Terraria.ID;
+using Terraria.ModLoader.Config;
 
 
 namespace ChestImplants {
-	public class ChestImplantsConfigData : ConfigurationDataBase {
-		public static string ConfigFileName => "Chest Implants Config.json";
+	public class ChestImplantsConfig : ModConfig {
+		public override ConfigScope Mode => ConfigScope.ServerSide;
+
 
 
 		////////////////
 
-		public string VersionSinceUpdate = new Version( 0, 0, 0, 0 ).ToString();
-
+		[DefaultValue(true)]
 		public bool DebugModeInfo = true;
 
-		public IDictionary<string, IDictionary<int, ChestImplantInfo>> Stuffers = new Dictionary<string, IDictionary<int, ChestImplantInfo>>();
-
-
-
-		////////////////
-
-		public void SetDefaults() {
-			this.Stuffers.Clear();
-
-			this.Stuffers["Web Covered Chest"] = new Dictionary<int, ChestImplantInfo> {
-				{
-					WallID.SpiderUnsafe, new ChestImplantInfo {
-						ItemByName = "Silk",
+		public Dictionary<string, HashSet<ChestImplantItemDefinition>> Stuffers = new Dictionary<string, HashSet<ChestImplantItemDefinition>> {
+			{
+				"Web Covered Chest", new HashSet<ChestImplantItemDefinition> {
+					new ChestImplantItemDefinition {
+						UniqueKey = ItemID.GetUniqueKey( ItemID.Silk ),
+						WallId = WallID.SpiderUnsafe,
 						SpawnChancePerChest = 1f,
 						MinQuantity = 99,
 						MaxQuantity = 99,
 					}
 				}
-			};
-		}
-
-
-		////////////////
-
-		internal bool UpdateToLatestVersion( ChestImplantsMod mymod ) {
-			var new_config = new ChestImplantsConfigData();
-			var vers_since = this.VersionSinceUpdate != "" ?
-				new Version( this.VersionSinceUpdate ) :
-				new Version();
-			
-			if( vers_since >= mymod.Version ) {
-				return false;
 			}
-
-			if( vers_since == new Version(0, 0, 0, 0) ) {
-				this.SetDefaults();
-			}
-
-			this.VersionSinceUpdate = mymod.Version.ToString();
-
-			return true;
-		}
+		};
 	}
 }

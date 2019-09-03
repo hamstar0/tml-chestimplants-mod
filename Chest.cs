@@ -1,12 +1,13 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.ItemHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ID;
 
 
 namespace ChestImplants {
-	public class ChestImplantInfo {
-		public string ItemByName;
+	public class ChestImplantItemDefinition {
+		public string UniqueKey;
+		public int WallId;
 		public float SpawnChancePerChest;
 		public int MinQuantity;
 		public int MaxQuantity;
@@ -78,44 +79,51 @@ namespace ChestImplants {
 		public static void StuffChest( Chest chest ) {
 			var mymod = ChestImplantsMod.Instance;
 
-			Tile mytile = Main.tile[chest.x, chest.y];
+			Tile mytile = Main.tile[ chest.x, chest.y ];
 			string context = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 
 			if( mymod.Config.Stuffers.ContainsKey( context ) ) {
-				var stuffer = mymod.Config.Stuffers[context];
+				HashSet<ChestImplantItemDefinition> itemDefs = mymod.Config.Stuffers[context];
 
-				if( stuffer.ContainsKey( -1 ) ) {
-					ChestImplantStuffer.Implant( chest, stuffer[-1] );
-				} else if( stuffer.ContainsKey( mytile.wall ) ) {
-					ChestImplantStuffer.Implant( chest, stuffer[mytile.wall] );
+				foreach( ChestImplantItemDefinition itemDef in itemDefs ) {
+					if( itemDef.WallId == -1 || itemDef.WallId == mytile.wall ) {
+						if( ChestImplantStuffer.CanChestRandomlyBeStuffed(itemDef) ) {
+							ChestImplantStuffer.Implant( chest, itemDef );
+						}
+					}
 				}
 			}
 
-			foreach( var custom_stuffer in mymod.CustomStuffers ) {
-				custom_stuffer( context, mytile.wall, chest );
+			foreach( var customStuffer in mymod.CustomStuffers ) {
+				customStuffer( context, mytile.wall, chest );
 			}
 		}
 
 
 		////////////////
 
-		public static void Implant( Chest chest, ChestImplantInfo info ) {
-			if( Main.rand.NextFloat() >= info.SpawnChancePerChest ) {
-				return;
-			}
+		public static bool CanChestRandomlyBeStuffed( ChestImplantItemDefinition info ) {
+			return Main.rand.NextFloat() >= info.SpawnChancePerChest;
+		}
 
+		public static void Implant( Chest chest, ChestImplantItemDefinition info ) {
 			var mymod = ChestImplantsMod.Instance;
-			int added_amount = (int)( Main.rand.NextFloat() * (float)(info.MaxQuantity - info.MinQuantity) );
-			int amount = info.MinQuantity + added_amount;
-			int id = ItemIdentityHelpers.NamesToIds[ info.ItemByName ];
+			int addedAmount = (int)( Main.rand.NextFloat() * (float)(info.MaxQuantity - info.MinQuantity) );
+			int amount = info.MinQuantity + addedAmount;
+			int itemId = ItemID.TypeFromUniqueKey( info.UniqueKey );
+			if( itemId == 0 ) {
+				LogHelpers.AlertOnce( "Invalid item key " + info.UniqueKey );
+			}
 			
+			// Shift items down
 			for( int i=chest.item.Length-1; i>0; i-- ) {
 				chest.item[ i-1 ] = chest.item[ i ];
 			}
 
+			// Insert new item
 			chest.item[0] = new Item();
-			chest.item[0].SetDefaults( id );
+			chest.item[0].SetDefaults( itemId );
 			chest.item[0].stack = amount;
 			chest.item[0].prefix = (byte)info.Prefix;
 
@@ -123,7 +131,7 @@ namespace ChestImplants {
 				Tile mytile = Main.tile[chest.x, chest.y];
 				string context = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 
-				LogHelpers.Log( "Stuffed " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.ItemByName );
+				LogHelpers.Log( "Stuffed " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.UniqueKey );
 			}
 		}
 	}

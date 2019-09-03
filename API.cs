@@ -1,21 +1,11 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
-using System;
+﻿using System;
 using Terraria;
+using static ChestImplants.ChestImplantsMod;
 
 
 namespace ChestImplants {
 	public static partial class ChestImplantsAPI {
-		public static ChestImplantsConfigData GetModSettings() {
-			return ChestImplantsMod.Instance.Config;
-		}
-
-		public static void SaveModSettingsChanges() {
-			ChestImplantsMod.Instance.ConfigJson.SaveFile();
-		}
-
-		////
-		
-		public static void AddCustomStuffer( Action<string, int, Chest> stuffer ) {
+		public static void AddCustomStuffer( ChestStuffer stuffer ) {
 			ChestImplantsMod.Instance.CustomStuffers.Add( stuffer );
 		}
 	}

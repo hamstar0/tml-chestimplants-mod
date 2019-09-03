@@ -1,5 +1,4 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.World.Generation;
