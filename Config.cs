@@ -6,6 +6,26 @@ using Terraria.ModLoader.Config;
 
 
 namespace ChestImplants {
+	public class ChestImplanterDefinition {
+		public string ChestContext;
+		public HashSet<ChestImplanterItemDefinition> ItemDefinitions;
+	}
+
+
+
+
+	public class ChestImplanterItemDefinition {
+		public string UniqueKey;
+		public int WallId;
+		public float SpawnChancePerChest;
+		public int MinQuantity;
+		public int MaxQuantity;
+		public int Prefix = 0;
+	}
+
+
+
+
 	public class ChestImplantsConfig : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 
@@ -16,18 +36,20 @@ namespace ChestImplants {
 		[DefaultValue(true)]
 		public bool DebugModeInfo = true;
 
-		public Dictionary<string, HashSet<ChestImplantItemDefinition>> Stuffers = new Dictionary<string, HashSet<ChestImplantItemDefinition>> {
-			{
-				"Web Covered Chest", new HashSet<ChestImplantItemDefinition> {
-					new ChestImplantItemDefinition {
-						UniqueKey = ItemID.GetUniqueKey( ItemID.Silk ),
-						WallId = WallID.SpiderUnsafe,
-						SpawnChancePerChest = 1f,
-						MinQuantity = 99,
-						MaxQuantity = 99,
+		public HashSet<ChestImplanterDefinition> Stuffers =
+			new HashSet<ChestImplanterDefinition> {
+				new ChestImplanterDefinition {
+					ChestContext = "Web Covered Chest",
+					ItemDefinitions = new HashSet<ChestImplanterItemDefinition> {
+						new ChestImplanterItemDefinition {
+							UniqueKey = ItemID.GetUniqueKey( ItemID.Silk ),
+							WallId = WallID.SpiderUnsafe,
+							SpawnChancePerChest = 1f,
+							MinQuantity = 99,
+							MaxQuantity = 99,
+						}
 					}
 				}
-			}
-		};
+			};
 	}
 }

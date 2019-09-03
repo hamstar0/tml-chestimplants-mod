@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 
 namespace ChestImplants {
-	public delegate void ChestStuffer( string context, int wallId, Chest chest );
+	public delegate void CustomChestImplanter( string context, Chest chest );
 
 
 
@@ -20,7 +20,7 @@ namespace ChestImplants {
 
 		public ChestImplantsConfig Config => this.GetConfig<ChestImplantsConfig>();
 
-		public ISet<ChestStuffer> CustomStuffers { get; } = new HashSet<ChestStuffer>();
+		public ISet<CustomChestImplanter> CustomImplanter { get; } = new HashSet<CustomChestImplanter>();
 
 
 

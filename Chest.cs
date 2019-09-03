@@ -1,22 +1,11 @@
 ﻿using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.DotNET.Extensions;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 
 
 namespace ChestImplants {
-	public class ChestImplantItemDefinition {
-		public string UniqueKey;
-		public int WallId;
-		public float SpawnChancePerChest;
-		public int MinQuantity;
-		public int MaxQuantity;
-		public int Prefix = 0;
-	}
-
-
-
-
 	class ChestImplantStuffer {
 		public static string GetContext( int frame ) {
 			switch( frame ) {
@@ -80,34 +69,36 @@ namespace ChestImplants {
 			var mymod = ChestImplantsMod.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string context = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
+			string currentContext = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
+			
+			foreach( ChestImplanterDefinition implantDef in mymod.Config.Stuffers ) {
+				if( implantDef.ChestContext != currentContext ) {
+					continue;
+				}
 
-			if( mymod.Config.Stuffers.ContainsKey( context ) ) {
-				HashSet<ChestImplantItemDefinition> itemDefs = mymod.Config.Stuffers[context];
-
-				foreach( ChestImplantItemDefinition itemDef in itemDefs ) {
+				foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
 					if( itemDef.WallId == -1 || itemDef.WallId == mytile.wall ) {
-						if( ChestImplantStuffer.CanChestRandomlyBeStuffed(itemDef) ) {
+						if( ChestImplantStuffer.CanChestRandomlyBeStuffed( itemDef ) ) {
 							ChestImplantStuffer.Implant( chest, itemDef );
 						}
 					}
 				}
 			}
 
-			foreach( var customStuffer in mymod.CustomStuffers ) {
-				customStuffer( context, mytile.wall, chest );
+			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
+				customStuffer( currentContext, chest );
 			}
 		}
 
 
 		////////////////
 
-		public static bool CanChestRandomlyBeStuffed( ChestImplantItemDefinition info ) {
+		public static bool CanChestRandomlyBeStuffed( ChestImplanterItemDefinition info ) {
 			return Main.rand.NextFloat() >= info.SpawnChancePerChest;
 		}
 
-		public static void Implant( Chest chest, ChestImplantItemDefinition info ) {
+		public static void Implant( Chest chest, ChestImplanterItemDefinition info ) {
 			var mymod = ChestImplantsMod.Instance;
 			int addedAmount = (int)( Main.rand.NextFloat() * (float)(info.MaxQuantity - info.MinQuantity) );
 			int amount = info.MinQuantity + addedAmount;
