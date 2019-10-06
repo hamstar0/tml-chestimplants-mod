@@ -18,7 +18,7 @@ namespace ChestImplants {
 
 		////////////////
 
-		public ChestImplantsConfig Config => this.GetConfig<ChestImplantsConfig>();
+		public ChestImplantsConfig Config => ModContent.GetInstance<ChestImplantsConfig>();
 
 		public ISet<CustomChestImplanter> CustomImplanter { get; } = new HashSet<CustomChestImplanter>();
 
