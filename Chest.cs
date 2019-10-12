@@ -1,7 +1,6 @@
 ﻿using HamstarHelpers.Helpers.Debug;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 
 
 namespace ChestImplants {
@@ -71,7 +70,7 @@ namespace ChestImplants {
 			string currentContext = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
-			foreach( ChestImplanterDefinition implantDef in mymod.Config.Stuffers ) {
+			foreach( ChestImplanterDefinition implantDef in mymod.Config.ChestStuffers ) {
 				if( implantDef.ChestContext != currentContext ) {
 					continue;
 				}
@@ -101,9 +100,9 @@ namespace ChestImplants {
 			var mymod = ChestImplantsMod.Instance;
 			int addedAmount = (int)( Main.rand.NextFloat() * (float)(info.MaxQuantity - info.MinQuantity) );
 			int amount = info.MinQuantity + addedAmount;
-			int itemId = ItemID.TypeFromUniqueKey( info.UniqueKey );
+			int itemId = info.ChestItem.Type;
 			if( itemId == 0 ) {
-				LogHelpers.AlertOnce( "Invalid item key " + info.UniqueKey );
+				LogHelpers.AlertOnce( "Invalid item key " + info.ChestItem );
 			}
 			
 			// Shift items down
@@ -121,7 +120,7 @@ namespace ChestImplants {
 				Tile mytile = Main.tile[chest.x, chest.y];
 				string context = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 
-				LogHelpers.Log( "Stuffed " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.UniqueKey );
+				LogHelpers.Log( "Stuffed " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.ChestItem.ToString() );
 			}
 		}
 	}

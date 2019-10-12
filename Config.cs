@@ -16,7 +16,7 @@ namespace ChestImplants {
 
 
 	public class ChestImplanterItemDefinition {
-		public string UniqueKey;
+		public ItemDefinition ChestItem;
 		public int WallId;
 		[Range(0f, 1f)]
 		[CustomModConfigItem( typeof( FloatInputElement ) )]
@@ -39,13 +39,13 @@ namespace ChestImplants {
 		[DefaultValue(true)]
 		public bool DebugModeInfo = true;
 
-		public HashSet<ChestImplanterDefinition> Stuffers =
+		public HashSet<ChestImplanterDefinition> ChestStuffers =
 			new HashSet<ChestImplanterDefinition> {
 				new ChestImplanterDefinition {
 					ChestContext = "Web Covered Chest",
 					ItemDefinitions = new HashSet<ChestImplanterItemDefinition> {
 						new ChestImplanterItemDefinition {
-							UniqueKey = ItemID.GetUniqueKey( ItemID.Silk ),
+							ChestItem = new ItemDefinition( ItemID.Silk ),
 							WallId = WallID.SpiderUnsafe,
 							SpawnChancePerChest = 1f,
 							MinQuantity = 99,
