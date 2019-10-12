@@ -7,6 +7,12 @@ using Terraria.ModLoader.Config;
 
 
 namespace ChestImplants {
+	class MyFloatInputElement : FloatInputElement { }
+
+
+
+
+
 	public class ChestImplanterDefinition {
 		public string ChestContext;
 		public HashSet<ChestImplanterItemDefinition> ItemDefinitions;
@@ -19,7 +25,7 @@ namespace ChestImplants {
 		public ItemDefinition ChestItem;
 		public int WallId;
 		[Range(0f, 1f)]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float SpawnChancePerChest;
 		public int MinQuantity;
 		public int MaxQuantity;
