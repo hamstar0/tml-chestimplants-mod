@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HamstarHelpers.Classes.UI.ModConfig;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Terraria.ID;
@@ -17,6 +18,8 @@ namespace ChestImplants {
 	public class ChestImplanterItemDefinition {
 		public string UniqueKey;
 		public int WallId;
+		[Range(0f, 1f)]
+		[CustomModConfigItem( typeof( FloatInputElement ) )]
 		public float SpawnChancePerChest;
 		public int MinQuantity;
 		public int MaxQuantity;
