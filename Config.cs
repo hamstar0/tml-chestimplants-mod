@@ -22,14 +22,23 @@ namespace ChestImplants {
 
 
 	public class ChestImplanterItemDefinition {
-		public ItemDefinition ChestItem;
-		public int WallId;
+		public ItemDefinition ChestItem { get; set; }
+
+		public int WallId { get; set; }
+
 		[Range(0f, 1f)]
 		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
-		public float SpawnChancePerChest;
-		public int MinQuantity;
-		public int MaxQuantity;
-		public int Prefix = 0;
+		public float SpawnChancePerChest { get; set; }
+
+		[Range(0, 999)]
+		[DefaultValue( 1 )]
+		public int MinQuantity { get; set; }
+
+		[Range( 0, 999 )]
+		[DefaultValue( 1 )]
+		public int MaxQuantity { get; set; }
+
+		public int Prefix { get; set; } = 0;
 	}
 
 
@@ -45,8 +54,8 @@ namespace ChestImplants {
 		[DefaultValue(true)]
 		public bool DebugModeInfo = true;
 
-		public HashSet<ChestImplanterDefinition> ChestStuffers =
-			new HashSet<ChestImplanterDefinition> {
+		public List<ChestImplanterDefinition> ChestStuffers { get; set; } =
+			new List<ChestImplanterDefinition> {
 				new ChestImplanterDefinition {
 					ChestContext = "Web Covered Chest",
 					ItemDefinitions = new HashSet<ChestImplanterItemDefinition> {

@@ -13,12 +13,17 @@ namespace ChestImplants {
 
 	partial class ChestImplantsMod : Mod {
 		public static ChestImplantsMod Instance { get; private set; }
-
+		public static ChestImplantsConfig Config => ModContent.GetInstance<ChestImplantsConfig>();
 
 
 		////////////////
 
-		public ChestImplantsConfig Config => ModContent.GetInstance<ChestImplantsConfig>();
+		public static string GithubUserName => "hamstar0";
+		public static string GithubProjectName => "tml-chestimplants-mod";
+
+
+
+		////////////////
 
 		public ISet<CustomChestImplanter> CustomImplanter { get; } = new HashSet<CustomChestImplanter>();
 

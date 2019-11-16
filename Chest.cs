@@ -70,7 +70,7 @@ namespace ChestImplants {
 			string currentContext = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
-			foreach( ChestImplanterDefinition implantDef in mymod.Config.ChestStuffers ) {
+			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestStuffers ) {
 				if( implantDef.ChestContext != currentContext ) {
 					continue;
 				}
@@ -97,12 +97,16 @@ namespace ChestImplants {
 		}
 
 		public static void Implant( Chest chest, ChestImplanterItemDefinition info ) {
-			var mymod = ChestImplantsMod.Instance;
-			int addedAmount = (int)( Main.rand.NextFloat() * (float)(info.MaxQuantity - info.MinQuantity) );
+			int addedAmount = (int)( Main.rand.Next(info.MaxQuantity - info.MinQuantity) );
 			int amount = info.MinQuantity + addedAmount;
+			if( amount == 0 ) {
+				return;
+			}
+
 			int itemId = info.ChestItem.Type;
 			if( itemId == 0 ) {
-				LogHelpers.AlertOnce( "Invalid item key " + info.ChestItem );
+				LogHelpers.Alert( "Invalid item key " + info.ChestItem );
+				return;
 			}
 			
 			// Shift items down
@@ -116,7 +120,7 @@ namespace ChestImplants {
 			chest.item[0].stack = amount;
 			chest.item[0].prefix = (byte)info.Prefix;
 
-			if( mymod.Config.DebugModeInfo ) {
+			if( ChestImplantsMod.Config.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
 				string context = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
 
