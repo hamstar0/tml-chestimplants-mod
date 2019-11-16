@@ -4,7 +4,7 @@ using Terraria;
 
 
 namespace ChestImplants {
-	class ChestImplantStuffer {
+	public partial class ChestImplanter {
 		public static string GetChestTypeOfFrame( int frame ) {
 			switch( frame ) {
 			case 0:
@@ -63,11 +63,11 @@ namespace ChestImplants {
 
 		////////////////
 
-		public static void StuffChest( Chest chest ) {
+		public static void ApplyConfiguredImplantsToChest( Chest chest ) {
 			var mymod = ChestImplantsMod.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string currentContext = ChestImplantStuffer.GetChestTypeOfFrame( mytile.frameX / 36 );
+			string currentContext = ChestImplanter.GetChestTypeOfFrame( mytile.frameX / 36 );
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
 			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestImplanterDefinitions ) {
@@ -76,10 +76,8 @@ namespace ChestImplants {
 				}
 
 				foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
-					if( itemDef.WallId == -1 || itemDef.WallId == mytile.wall ) {
-						if( ChestImplantStuffer.CanChestRandomlyBeImplanted( itemDef ) ) {
-							ChestImplantStuffer.Implant( chest, itemDef );
-						}
+					if( ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ) ) {
+						ChestImplanter.Implant( chest, itemDef );
 					}
 				}
 			}
@@ -92,11 +90,15 @@ namespace ChestImplants {
 
 		////////////////
 
-		public static bool CanChestRandomlyBeImplanted( ChestImplanterItemDefinition info ) {
+		public static bool CanChestAcceptImplantItem( Tile chestTile, ChestImplanterItemDefinition info ) {
+			if( info.WallId != -1 && info.WallId != chestTile.wall ) {
+				return false;
+			}
 			return Main.rand.NextFloat() >= info.ChancePerChest;
 		}
 
-		////
+
+		////////////////
 
 		public static void Implant( Chest chest, ChestImplanterItemDefinition info ) {
 			int addedAmount = (int)( Main.rand.Next( info.MaxQuantity - info.MinQuantity ) );
@@ -112,60 +114,9 @@ namespace ChestImplants {
 			}
 
 			if( amount > 0 ) {
-				ChestImplantStuffer.PrependItemToChest( chest, itemType, amount, info );
+				ChestImplanter.PrependItemToChest( chest, itemType, amount, info );
 			} else {
-				ChestImplantStuffer.ExtractItemFromChest( chest, itemType, -amount );
-			}
-		}
-
-
-		////////////////
-
-		public static void PrependItemToChest( Chest chest, int itemType, int amount, ChestImplanterItemDefinition info ) {
-			// Shift items up
-			for( int i=chest.item.Length-1; i>0; i-- ) {
-				chest.item[ i-1 ] = chest.item[ i ];
-			}
-
-			// Insert new item
-			chest.item[0] = new Item();
-			chest.item[0].SetDefaults( itemType );
-			chest.item[0].stack = amount;
-			chest.item[0].prefix = (byte)info.Prefix;
-
-			if( ChestImplantsMod.Config.DebugModeInfo ) {
-				Tile mytile = Main.tile[chest.x, chest.y];
-				string context = ChestImplantStuffer.GetChestTypeOfFrame( mytile.frameX / 36 );
-
-				LogHelpers.Log( "Stuffed " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.ChestItem.ToString() );
-			}
-		}
-
-		////
-
-		public static void ExtractItemFromChest( Chest chest, int itemType, int amount ) {
-			var chestList = new List<Item>( chest.item );
-
-			int foundAt = -1;
-			for( int i=0; i<chestList.Count; i++ ) {
-				if( chestList[i].type == itemType ) {
-					if( chestList[i].stack > amount ) {
-						chestList[i].stack -= amount;
-						return;
-					} else {
-						foundAt = i;
-						break;
-					}
-				}
-			}
-
-			if( foundAt == -1 ) {
-				//LogHelpers.LogOnce( "Could not find item "+itemType+" to extract "+amount+" of." );
-				return;
-			}
-
-			for( int i=foundAt; i < chestList.Count - 1; i++ ) {
-				chestList[i] = chestList[i + 1];
+				ChestImplanter.ExtractItemFromChest( chest, itemType, -amount );
 			}
 		}
 	}

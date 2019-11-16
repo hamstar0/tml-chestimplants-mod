@@ -14,9 +14,9 @@ namespace ChestImplants {
 		public override void Apply( GenerationProgress progress ) {
 			for( int i=0; i<Main.chest.Length; i++ ) {
 				Chest mychest = Main.chest[i];
-				if( mychest == null || ChestImplantStuffer.IsChestEmpty(mychest) ) { continue; }
+				if( mychest == null || ChestImplanter.IsChestEmpty(mychest) ) { continue; }
 
-				ChestImplantStuffer.StuffChest( mychest );
+				ChestImplanter.ApplyConfiguredImplantsToChest( mychest );
 
 				progress.Value = (float)i / (float)Main.chest.Length;
 			}
