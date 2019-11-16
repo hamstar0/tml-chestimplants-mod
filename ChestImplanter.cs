@@ -1,57 +1,11 @@
-﻿using HamstarHelpers.Helpers.Debug;
-using System.Collections.Generic;
+﻿using HamstarHelpers.Classes.Errors;
+using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.Tiles;
 using Terraria;
 
 
 namespace ChestImplants {
 	public partial class ChestImplanter {
-		public static string GetChestTypeOfFrame( int frame ) {
-			switch( frame ) {
-			case 0:
-				return "Chest";
-			case 1:
-				return "Gold Chest";
-			case 2:
-				return "Locked Gold Chest";
-			case 4:
-				return "Shadow Chest";
-			case 8:
-				return "Mushroom Chest";    //?
-			case 10:
-				return "Rich Mahogany Chest";
-			case 11:
-				return "Ice Chest";
-			case 12:
-				return "Living Wood Chest";
-			case 13:
-				return "Skyware Chest";
-			case 15:
-				return "Web Covered Chest";
-			case 16:
-				return "Lihzahrd Chest";
-			case 17:
-				return "Water Chest";
-			case 50:
-				return "Granite Chest";
-			case 51:
-				return "Marble Chest";
-			case 23:
-				return "Jungle Chest";
-			case 24:
-				return "Corruption Chest";
-			case 25:
-				return "Crimson Chest";
-			case 26:
-				return "Hallowed Chest";
-			case 27:
-				return "Frozen Chest";
-			default:
-				throw new KeyNotFoundException( "Frame: " + frame );
-			}
-		}
-		
-		////////////////
-
 		public static bool IsChestEmpty( Chest chest ) {
 			for( int i = 0; i < chest.item.Length; i++ ) {
 				if( chest.item[i] == null || chest.item[i].IsAir ) { continue; }
@@ -67,7 +21,10 @@ namespace ChestImplants {
 			var mymod = ChestImplantsMod.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string currentContext = ChestImplanter.GetChestTypeOfFrame( mytile.frameX / 36 );
+			string currentContext;
+			if( !TileFrameHelpers.ChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out currentContext) ) {
+				throw new ModHelpersException( "Could not find chest frame" );
+			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
 			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestImplanterDefinitions ) {

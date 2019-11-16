@@ -1,4 +1,6 @@
-﻿using HamstarHelpers.Helpers.Debug;
+﻿using HamstarHelpers.Classes.Errors;
+using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.Tiles;
 using System.Collections.Generic;
 using Terraria;
 
@@ -23,7 +25,10 @@ namespace ChestImplants {
 
 			if( ChestImplantsMod.Config.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
-				string context = ChestImplanter.GetChestTypeOfFrame( mytile.frameX / 36 );
+				string context;
+				if( !TileFrameHelpers.ChestTypeNamesByFrame.TryGetValue( mytile.frameX / 36, out context ) ) {
+					throw new ModHelpersException( "Could not find chest frame" );
+				}
 
 				LogHelpers.Log( "Implanted " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.ChestItem.ToString() );
 			}
