@@ -22,7 +22,7 @@ namespace ChestImplants {
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
 			string currentContext;
-			if( !TileFrameHelpers.ChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out currentContext) ) {
+			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out currentContext) ) {
 				throw new ModHelpersException( "Could not find chest frame" );
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
