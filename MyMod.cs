@@ -11,7 +11,7 @@ namespace ChestImplants {
 
 
 
-	partial class ChestImplantsMod : Mod {
+	public partial class ChestImplantsMod : Mod {
 		public static ChestImplantsMod Instance { get; private set; }
 		public static ChestImplantsConfig Config => ModContent.GetInstance<ChestImplantsConfig>();
 
@@ -25,7 +25,7 @@ namespace ChestImplants {
 
 		////////////////
 
-		public ISet<CustomChestImplanter> CustomImplanter { get; } = new HashSet<CustomChestImplanter>();
+		internal ISet<CustomChestImplanter> CustomImplanter { get; } = new HashSet<CustomChestImplanter>();
 
 
 

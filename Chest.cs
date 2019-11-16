@@ -5,7 +5,7 @@ using Terraria;
 
 namespace ChestImplants {
 	class ChestImplantStuffer {
-		public static string GetContext( int frame ) {
+		public static string GetChestTypeOfFrame( int frame ) {
 			switch( frame ) {
 			case 0:
 				return "Chest";
@@ -67,23 +67,23 @@ namespace ChestImplants {
 			var mymod = ChestImplantsMod.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string currentContext = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
+			string currentContext = ChestImplantStuffer.GetChestTypeOfFrame( mytile.frameX / 36 );
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
-			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestStuffers ) {
+			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestImplanterDefinitions ) {
 				if( implantDef.ChestContext != currentContext ) {
 					continue;
 				}
 
 				foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
 					if( itemDef.WallId == -1 || itemDef.WallId == mytile.wall ) {
-						if( ChestImplantStuffer.CanChestRandomlyBeStuffed( itemDef ) ) {
+						if( ChestImplantStuffer.CanChestRandomlyBeImplanted( itemDef ) ) {
 							ChestImplantStuffer.Implant( chest, itemDef );
 						}
 					}
 				}
 			}
-
+			
 			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
 				customStuffer( currentContext, chest );
 			}
@@ -92,39 +92,80 @@ namespace ChestImplants {
 
 		////////////////
 
-		public static bool CanChestRandomlyBeStuffed( ChestImplanterItemDefinition info ) {
-			return Main.rand.NextFloat() >= info.SpawnChancePerChest;
+		public static bool CanChestRandomlyBeImplanted( ChestImplanterItemDefinition info ) {
+			return Main.rand.NextFloat() >= info.ChancePerChest;
 		}
 
+		////
+
 		public static void Implant( Chest chest, ChestImplanterItemDefinition info ) {
-			int addedAmount = (int)( Main.rand.Next(info.MaxQuantity - info.MinQuantity) );
+			int addedAmount = (int)( Main.rand.Next( info.MaxQuantity - info.MinQuantity ) );
 			int amount = info.MinQuantity + addedAmount;
 			if( amount == 0 ) {
 				return;
 			}
 
-			int itemId = info.ChestItem.Type;
-			if( itemId == 0 ) {
+			int itemType = info.ChestItem.Type;
+			if( itemType == 0 ) {
 				LogHelpers.Alert( "Invalid item key " + info.ChestItem );
 				return;
 			}
-			
-			// Shift items down
+
+			if( amount > 0 ) {
+				ChestImplantStuffer.PrependItemToChest( chest, itemType, amount, info );
+			} else {
+				ChestImplantStuffer.ExtractItemFromChest( chest, itemType, -amount );
+			}
+		}
+
+
+		////////////////
+
+		public static void PrependItemToChest( Chest chest, int itemType, int amount, ChestImplanterItemDefinition info ) {
+			// Shift items up
 			for( int i=chest.item.Length-1; i>0; i-- ) {
 				chest.item[ i-1 ] = chest.item[ i ];
 			}
 
 			// Insert new item
 			chest.item[0] = new Item();
-			chest.item[0].SetDefaults( itemId );
+			chest.item[0].SetDefaults( itemType );
 			chest.item[0].stack = amount;
 			chest.item[0].prefix = (byte)info.Prefix;
 
 			if( ChestImplantsMod.Config.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
-				string context = ChestImplantStuffer.GetContext( mytile.frameX / 36 );
+				string context = ChestImplantStuffer.GetChestTypeOfFrame( mytile.frameX / 36 );
 
 				LogHelpers.Log( "Stuffed " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.ChestItem.ToString() );
+			}
+		}
+
+		////
+
+		public static void ExtractItemFromChest( Chest chest, int itemType, int amount ) {
+			var chestList = new List<Item>( chest.item );
+
+			int foundAt = -1;
+			for( int i=0; i<chestList.Count; i++ ) {
+				if( chestList[i].type == itemType ) {
+					if( chestList[i].stack > amount ) {
+						chestList[i].stack -= amount;
+						return;
+					} else {
+						foundAt = i;
+						break;
+					}
+				}
+			}
+
+			if( foundAt == -1 ) {
+				//LogHelpers.LogOnce( "Could not find item "+itemType+" to extract "+amount+" of." );
+				return;
+			}
+
+			for( int i=foundAt; i < chestList.Count - 1; i++ ) {
+				chestList[i] = chestList[i + 1];
 			}
 		}
 	}
