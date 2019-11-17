@@ -18,6 +18,33 @@ namespace ChestImplants {
 		}
 
 
+		public static bool IsChestMatch( string currentChestType, string matchType ) {
+			if( currentChestType != matchType ) {
+				if( matchType == "Vanilla Underground World Chest" ) {
+					switch( currentChestType ) {
+					case "Chest":
+					//case "Locked Gold Chest":
+					case "Locked Shadow Chest":
+					case "Lihzahrd Chest":
+					case "Locked Jungle Chest":
+					case "Locked Corruption Chest":
+					case "Locked Crimson Chest":
+					case "Locked Hallowed Chest":
+					case "Locked Frozen Chest":
+					case "Locked Green Dungeon Chest":
+					case "Locked Pink Dungeon Chest":
+					case "Locked Blue Dungeon Chest":
+						return false;
+					}
+				} else {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
 		////////////////
 
 		public static void ApplyConfiguredImplantsToChest( Chest chest ) {
@@ -36,23 +63,15 @@ namespace ChestImplants {
 					continue;
 				}
 
-				if( !implantDef.ChestTypes.Contains( currentChestType ) ) {
-					if( implantDef.ChestTypes.Contains( "Vanilla Underground World Chest" ) ) {
-						switch( currentChestType ) {
-						case "Chest":
-						case "Locked Gold Chest":
-						case "Shadow Chest":
-						case "Lihzahrd Chest":
-						case "Jungle Chest":
-						case "Corruption Chest":
-						case "Crimson Chest":
-						case "Hallowed Chest":
-						case "Frozen Chest":
-							continue;
-						}
-					} else {
-						continue;
+				bool isMatched = false;
+				foreach( string checkChestType in implantDef.ChestTypes ) {
+					if( ChestImplanter.IsChestMatch( currentChestType, checkChestType ) ) {
+						isMatched = true;
+						break;
 					}
+				}
+				if( !isMatched ) {
+					continue;
 				}
 
 				foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {

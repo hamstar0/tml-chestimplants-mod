@@ -25,6 +25,7 @@ namespace ChestImplants {
 
 			if( ChestImplantsMod.Config.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
+
 				string context;
 				if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue( mytile.frameX / 36, out context ) ) {
 					throw new ModHelpersException( "Could not find chest frame" );
