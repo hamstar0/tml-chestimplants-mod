@@ -1,7 +1,10 @@
 ﻿using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
+using HamstarHelpers.Helpers.TModLoader;
 using Terraria;
+using Terraria.Utilities;
 
 
 namespace ChestImplants {
@@ -21,15 +24,35 @@ namespace ChestImplants {
 			var mymod = ChestImplantsMod.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string currentContext;
-			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out currentContext) ) {
+			string currentChestType;
+			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out currentChestType) ) {
 				throw new ModHelpersException( "Could not find chest frame" );
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
-			
-			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestImplanterDefinitions ) {
-				if( !implantDef.ChestTypes.Contains(currentContext) ) {
+
+			foreach( (string defSet, ChestImplanterSetDefinition setDef) in ChestImplantsMod.Config.ChestImplanterDefinitions ) {
+				ChestImplanterDefinition implantDef = ChestImplanter.GetRandomImplanterFromSet( setDef );
+				if( implantDef == null ) {
 					continue;
+				}
+
+				if( !implantDef.ChestTypes.Contains( currentChestType ) ) {
+					if( implantDef.ChestTypes.Contains( "Vanilla Underground World Chest" ) ) {
+						switch( currentChestType ) {
+						case "Chest":
+						case "Locked Gold Chest":
+						case "Shadow Chest":
+						case "Lihzahrd Chest":
+						case "Jungle Chest":
+						case "Corruption Chest":
+						case "Crimson Chest":
+						case "Hallowed Chest":
+						case "Frozen Chest":
+							continue;
+						}
+					} else {
+						continue;
+					}
 				}
 
 				foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
@@ -37,11 +60,36 @@ namespace ChestImplants {
 						ChestImplanter.Implant( chest, itemDef );
 					}
 				}
+
+				break;
 			}
 			
 			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
-				customStuffer( currentContext, chest );
+				customStuffer( currentChestType, chest );
 			}
+		}
+
+		private static ChestImplanterDefinition GetRandomImplanterFromSet( ChestImplanterSetDefinition setDef ) {
+			if( setDef.Count == 0 ) {
+				return null;
+			}
+
+			UnifiedRandom rand = TmlHelpers.SafelyGetRand();
+			float totalWeight = setDef.TotalWeight();
+			float randPick = rand.NextFloat() * totalWeight;
+
+			float countedWeights = setDef[0].Weight;
+
+			int i = 0;
+			for( i = 1; i < setDef.Count; i++ ) {
+				if( countedWeights > randPick ) {
+					return setDef[ i-1 ];
+				}
+				countedWeights += setDef[i].Weight;
+			}
+
+			LogHelpers.Warn( "Could not randomly pick from implanter set." );
+			return null;
 		}
 
 

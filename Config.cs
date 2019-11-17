@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Terraria.ID;
 using Terraria.ModLoader.Config;
 
@@ -13,9 +14,21 @@ namespace ChestImplants {
 
 
 
+	public class ChestImplanterSetDefinition : List<ChestImplanterDefinition> {
+		public float TotalWeight() {
+			return this?.Sum( def => def.Weight )
+					?? 0f;
+		}
+	}
+
+
+
 	public class ChestImplanterDefinition {
-		public HashSet<string> ChestTypes;
-		public List<ChestImplanterItemDefinition> ItemDefinitions;
+		[Range( 0f, 1f )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
+		public float Weight { get; set; }
+		public HashSet<string> ChestTypes { get; set; }
+		public List<ChestImplanterItemDefinition> ItemDefinitions { get; set; }
 	}
 
 
@@ -24,6 +37,7 @@ namespace ChestImplants {
 	public class ChestImplanterItemDefinition {
 		public ItemDefinition ChestItem { get; set; }
 
+		[DefaultValue( -1 )]
 		public int WallId { get; set; } = -1;
 
 		[Range( 0f, 1f )]
@@ -38,6 +52,7 @@ namespace ChestImplants {
 		[DefaultValue( 1 )]
 		public int MaxQuantity { get; set; } = 1;
 
+		[DefaultValue( 0 )]
 		public int Prefix { get; set; } = 0;
 	}
 
@@ -54,42 +69,53 @@ namespace ChestImplants {
 		[DefaultValue(true)]
 		public bool DebugModeInfo = true;
 
-		public List<ChestImplanterDefinition> ChestImplanterDefinitions { get; set; } =
-			new List<ChestImplanterDefinition> {
-				new ChestImplanterDefinition {
-					ChestTypes = new HashSet<string> { "Web Covered Chest" },
-					ItemDefinitions = new List<ChestImplanterItemDefinition> {
-						new ChestImplanterItemDefinition {
-							ChestItem = new ItemDefinition( ItemID.Silk ),
-							WallId = WallID.SpiderUnsafe,
-							ChancePerChest = 1f,
-							MinQuantity = 99,
-							MaxQuantity = 99
+		public Dictionary<string, ChestImplanterSetDefinition> ChestImplanterDefinitions { get; set; } =
+			new Dictionary<string, ChestImplanterSetDefinition> {
+				{ "DefaultSet1", new ChestImplanterSetDefinition {
+					new ChestImplanterDefinition {
+						Weight = 1f,
+						ChestTypes = new HashSet<string> { "Web Covered Chest" },
+						ItemDefinitions = new List<ChestImplanterItemDefinition> {
+							new ChestImplanterItemDefinition {
+								ChestItem = new ItemDefinition( ItemID.Silk ),
+								WallId = WallID.SpiderUnsafe,
+								ChancePerChest = 1f,
+								MinQuantity = 99,
+								MaxQuantity = 99
+							}
 						}
 					}
-				},
-				new ChestImplanterDefinition {
-					ChestTypes = new HashSet<string> { "Gold Chest" },
-					ItemDefinitions = new List<ChestImplanterItemDefinition> {
-						new ChestImplanterItemDefinition {
-							ChestItem = new ItemDefinition( ItemID.MagicMirror ),
-							ChancePerChest = 1f,
-							MinQuantity = -1,
-							MaxQuantity = -1
+				} },
+				{ "DefaultSet2", new ChestImplanterSetDefinition {
+					new ChestImplanterDefinition {
+						Weight = 1f,
+						ChestTypes = new HashSet<string> { "Gold Chest" },
+						ItemDefinitions = new List<ChestImplanterItemDefinition> {
+							new ChestImplanterItemDefinition {
+								ChestItem = new ItemDefinition( ItemID.MagicMirror ),
+								ChancePerChest = 1f,
+								MinQuantity = -1,
+								MaxQuantity = -1
+							}
 						}
 					}
-				},
-				new ChestImplanterDefinition {
-					ChestTypes = new HashSet<string> { "Ice Chest" },
-					ItemDefinitions = new List<ChestImplanterItemDefinition> {
-						new ChestImplanterItemDefinition {
-							ChestItem = new ItemDefinition( ItemID.IceMirror ),
-							ChancePerChest = 1f,
-							MinQuantity = -1,
-							MaxQuantity = -1
+				} },
+				{ "DefaultSet3",
+					new ChestImplanterSetDefinition {
+						new ChestImplanterDefinition {
+						Weight = 1f,
+						ChestTypes = new HashSet<string> { "Ice Chest" },
+						ItemDefinitions = new List<ChestImplanterItemDefinition> {
+							new ChestImplanterItemDefinition {
+								ChestItem = new ItemDefinition( ItemID.IceMirror ),
+								ChancePerChest = 1f,
+								MinQuantity = -1,
+								MaxQuantity = -1
+							}
 						}
 					}
-				}
+				} }
 			};
 	}
 }
+
