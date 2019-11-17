@@ -28,7 +28,7 @@ namespace ChestImplants {
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
 			foreach( ChestImplanterDefinition implantDef in ChestImplantsMod.Config.ChestImplanterDefinitions ) {
-				if( implantDef.ChestContext != currentContext ) {
+				if( !implantDef.ChestTypes.Contains(currentContext) ) {
 					continue;
 				}
 

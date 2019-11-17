@@ -14,7 +14,7 @@ namespace ChestImplants {
 
 
 	public class ChestImplanterDefinition {
-		public string ChestContext;
+		public HashSet<string> ChestTypes;
 		public List<ChestImplanterItemDefinition> ItemDefinitions;
 	}
 
@@ -57,7 +57,7 @@ namespace ChestImplants {
 		public List<ChestImplanterDefinition> ChestImplanterDefinitions { get; set; } =
 			new List<ChestImplanterDefinition> {
 				new ChestImplanterDefinition {
-					ChestContext = "Web Covered Chest",
+					ChestTypes = new HashSet<string> { "Web Covered Chest" },
 					ItemDefinitions = new List<ChestImplanterItemDefinition> {
 						new ChestImplanterItemDefinition {
 							ChestItem = new ItemDefinition( ItemID.Silk ),
@@ -69,7 +69,7 @@ namespace ChestImplants {
 					}
 				},
 				new ChestImplanterDefinition {
-					ChestContext = "Gold Chest",
+					ChestTypes = new HashSet<string> { "Gold Chest" },
 					ItemDefinitions = new List<ChestImplanterItemDefinition> {
 						new ChestImplanterItemDefinition {
 							ChestItem = new ItemDefinition( ItemID.MagicMirror ),
@@ -80,7 +80,7 @@ namespace ChestImplants {
 					}
 				},
 				new ChestImplanterDefinition {
-					ChestContext = "Ice Chest",
+					ChestTypes = new HashSet<string> { "Ice Chest" },
 					ItemDefinitions = new List<ChestImplanterItemDefinition> {
 						new ChestImplanterItemDefinition {
 							ChestItem = new ItemDefinition( ItemID.IceMirror ),
