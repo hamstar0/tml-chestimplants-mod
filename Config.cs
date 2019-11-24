@@ -66,10 +66,13 @@ namespace ChestImplants {
 
 		////////////////
 
-		[DefaultValue(true)]
+		[DefaultValue( true )]
 		public bool DebugModeInfo = true;
 
-		public Dictionary<string, ChestImplanterSetDefinition> ChestImplanterDefinitions { get; set; } =
+		public Dictionary<string, ChestImplanterSetDefinition> AllFromSetChestImplanterDefinitions { get; set; } =
+			new Dictionary<string, ChestImplanterSetDefinition> { };
+
+		public Dictionary<string, ChestImplanterSetDefinition> RandomPickFromSetChestImplanterDefinitions { get; set; } =
 			new Dictionary<string, ChestImplanterSetDefinition> {
 				{ "DefaultSet1", new ChestImplanterSetDefinition {
 					new ChestImplanterDefinition {

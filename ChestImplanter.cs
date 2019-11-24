@@ -56,37 +56,48 @@ namespace ChestImplants {
 				throw new ModHelpersException( "Could not find chest frame" );
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
-
-			foreach( (string defSet, ChestImplanterSetDefinition setDef) in ChestImplantsMod.Config.ChestImplanterDefinitions ) {
+			
+			foreach( (string defSet, ChestImplanterSetDefinition setDef) in ChestImplantsMod.Config.RandomPickFromSetChestImplanterDefinitions ) {
 				ChestImplanterDefinition implantDef = ChestImplanter.GetRandomImplanterFromSet( setDef );
-				if( implantDef == null ) {
-					continue;
+				if( implantDef != null ) {
+					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
+					break;
 				}
-
-				bool isMatched = false;
-				foreach( string checkChestType in implantDef.ChestTypes ) {
-					if( ChestImplanter.IsChestMatch( currentChestType, checkChestType ) ) {
-						isMatched = true;
-						break;
-					}
+			}
+			foreach( (string defSet, ChestImplanterSetDefinition setDef) in ChestImplantsMod.Config.AllFromSetChestImplanterDefinitions ) {
+				foreach( ChestImplanterDefinition implantDef in setDef ) {
+					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
 				}
-				if( !isMatched ) {
-					continue;
-				}
-
-				foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
-					if( ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ) ) {
-						ChestImplanter.Implant( chest, itemDef );
-					}
-				}
-
-				break;
 			}
 			
 			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
 				customStuffer( currentChestType, chest );
 			}
 		}
+
+		private static void ApplyImplantToChest( Chest chest, ChestImplanterDefinition implantDef, string currentChestType ) {
+			Tile mytile = Main.tile[chest.x, chest.y];
+
+			bool isMatched = false;
+			foreach( string checkChestType in implantDef.ChestTypes ) {
+				if( ChestImplanter.IsChestMatch( currentChestType, checkChestType ) ) {
+					isMatched = true;
+					break;
+				}
+			}
+
+			if( !isMatched ) {
+				return;
+			}
+
+			foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
+				if( ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ) ) {
+					ChestImplanter.Implant( chest, itemDef );
+				}
+			}
+		}
+
+		////
 
 		private static ChestImplanterDefinition GetRandomImplanterFromSet( ChestImplanterSetDefinition setDef ) {
 			if( setDef.Count == 0 ) {
