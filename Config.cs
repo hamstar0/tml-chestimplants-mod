@@ -77,26 +77,8 @@ namespace ChestImplants {
 		public bool DebugModeInfo = true;
 
 		public Dictionary<string, ChestImplanterSetDefinition> AllFromSetChestImplanterDefinitions { get; set; } =
-			new Dictionary<string, ChestImplanterSetDefinition> { };
-
-		public Dictionary<string, ChestImplanterSetDefinition> RandomPickFromSetChestImplanterDefinitions { get; set; } =
 			new Dictionary<string, ChestImplanterSetDefinition> {
-				{ "DefaultSet1", new ChestImplanterSetDefinition {
-					new ChestImplanterDefinition {
-						Weight = 1f,
-						ChestTypes = new HashSet<string> { "Web Covered Chest" },
-						ItemDefinitions = new List<ChestImplanterItemDefinition> {
-							new ChestImplanterItemDefinition {
-								ChestItem = new ItemDefinition( ItemID.Silk ),
-								WallId = WallID.SpiderUnsafe,
-								ChancePerChest = 1f,
-								MinQuantity = 99,
-								MaxQuantity = 99
-							}
-						}
-					}
-				} },
-				{ "DefaultSet2", new ChestImplanterSetDefinition {
+				{ "ChestImplantsDefaultSampleNoMirror", new ChestImplanterSetDefinition {
 					new ChestImplanterDefinition {
 						Weight = 1f,
 						ChestTypes = new HashSet<string> { "Gold Chest" },
@@ -108,11 +90,8 @@ namespace ChestImplants {
 								MaxQuantity = -1
 							}
 						}
-					}
-				} },
-				{ "DefaultSet3",
-					new ChestImplanterSetDefinition {
-						new ChestImplanterDefinition {
+					},
+					new ChestImplanterDefinition {
 						Weight = 1f,
 						ChestTypes = new HashSet<string> { "Ice Chest" },
 						ItemDefinitions = new List<ChestImplanterItemDefinition> {
@@ -121,6 +100,25 @@ namespace ChestImplants {
 								ChancePerChest = 1f,
 								MinQuantity = -1,
 								MaxQuantity = -1
+							}
+						}
+					}
+				} }
+			};
+
+		public Dictionary<string, ChestImplanterSetDefinition> RandomPickFromSetChestImplanterDefinitions { get; set; } =
+			new Dictionary<string, ChestImplanterSetDefinition> {
+				{ "ChestImplantsDefaultSampleSilk", new ChestImplanterSetDefinition {
+					new ChestImplanterDefinition {
+						Weight = 1f,
+						ChestTypes = new HashSet<string> { "Web Covered Chest" },
+						ItemDefinitions = new List<ChestImplanterItemDefinition> {
+							new ChestImplanterItemDefinition {
+								ChestItem = new ItemDefinition( ItemID.Silk ),
+								WallId = WallID.SpiderUnsafe,
+								ChancePerChest = 1f,
+								MinQuantity = 99,
+								MaxQuantity = 99
 							}
 						}
 					}

@@ -137,9 +137,9 @@ namespace ChestImplants {
 		////////////////
 
 		public static void Implant( Chest chest, ChestImplanterItemDefinition info ) {
-			int addedAmount = (int)( Main.rand.Next( info.MaxQuantity - info.MinQuantity ) );
-			int amount = info.MinQuantity + addedAmount;
-			if( amount == 0 ) {
+			UnifiedRandom rand = TmlHelpers.SafelyGetRand();
+			int addedAmount = rand.Next( info.MinQuantity, info.MaxQuantity );
+			if( addedAmount == 0 ) {
 				return;
 			}
 
@@ -149,10 +149,10 @@ namespace ChestImplants {
 				return;
 			}
 
-			if( amount > 0 ) {
-				ChestImplanter.PrependItemToChest( chest, itemType, amount, info );
+			if( addedAmount > 0 ) {
+				ChestImplanter.PrependItemToChest( chest, itemType, addedAmount, info );
 			} else {
-				ChestImplanter.ExtractItemFromChest( chest, itemType, -amount );
+				ChestImplanter.ExtractItemFromChest( chest, itemType, -addedAmount );
 			}
 		}
 	}
