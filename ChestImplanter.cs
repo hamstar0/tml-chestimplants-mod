@@ -49,6 +49,7 @@ namespace ChestImplants {
 
 		public static void ApplyConfiguredImplantsToChest( Chest chest ) {
 			var mymod = ChestImplantsMod.Instance;
+			var config = ChestImplantsConfig.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
 			string currentChestType;
@@ -57,14 +58,14 @@ namespace ChestImplants {
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
-			foreach( (string defSet, ChestImplanterSetDefinition setDef) in ChestImplantsMod.Config.RandomPickFromSetChestImplanterDefinitions ) {
+			foreach( (string defSet, ChestImplanterSetDefinition setDef) in config.RandomPickFromSetChestImplanterDefinitions ) {
 				ChestImplanterDefinition implantDef = ChestImplanter.GetRandomImplanterFromSet( setDef );
 				if( implantDef != null ) {
 					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
 					break;
 				}
 			}
-			foreach( (string defSet, ChestImplanterSetDefinition setDef) in ChestImplantsMod.Config.AllFromSetChestImplanterDefinitions ) {
+			foreach( (string defSet, ChestImplanterSetDefinition setDef) in config.AllFromSetChestImplanterDefinitions ) {
 				foreach( ChestImplanterDefinition implantDef in setDef ) {
 					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
 				}

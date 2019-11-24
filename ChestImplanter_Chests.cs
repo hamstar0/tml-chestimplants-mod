@@ -23,7 +23,7 @@ namespace ChestImplants {
 		public static void PrependItemToChest( Chest chest, int itemType, int amount, ChestImplanterItemDefinition info ) {
 			ChestImplanter.PrependItemToChest( chest, itemType, amount, info.Prefix );
 
-			if( ChestImplantsMod.Config.DebugModeInfo ) {
+			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
 
 				string context;

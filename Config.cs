@@ -1,4 +1,5 @@
 ﻿using HamstarHelpers.Classes.UI.ModConfig;
+using HamstarHelpers.Services.Configs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,7 +60,13 @@ namespace ChestImplants {
 
 
 
-	public class ChestImplantsConfig : ModConfig {
+	public class ChestImplantsConfig : StackableModConfig {
+		public static ChestImplantsConfig Instance => ModConfigStack.GetMergedConfigs<ChestImplantsConfig>();
+
+
+
+		////////////////
+
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 
 

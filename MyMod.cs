@@ -13,7 +13,6 @@ namespace ChestImplants {
 
 	public partial class ChestImplantsMod : Mod {
 		public static ChestImplantsMod Instance { get; private set; }
-		public static ChestImplantsConfig Config => ModContent.GetInstance<ChestImplantsConfig>();
 
 
 		////////////////
