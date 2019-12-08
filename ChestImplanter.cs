@@ -61,18 +61,35 @@ namespace ChestImplants {
 			
 			foreach( (string defSet, ChestImplanterSetDefinition setDef) in config.RandomPickFromSetChestImplanterDefinitions ) {
 				ChestImplanterDefinition implantDef = ChestImplanter.GetRandomImplanterFromSet( setDef );
+				
+				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+					LogHelpers.Log( "ApplyConfiguredImplantsToChest RAND "
+						+ chest.GetHashCode() + currentChestType + " " + defSet
+						+ " - Set total: " + setDef.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
+					);
+				}
 				if( implantDef != null ) {
 					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
 					break;
 				}
 			}
 			foreach( (string defSet, ChestImplanterSetDefinition setDef) in config.AllFromSetChestImplanterDefinitions ) {
+				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+					LogHelpers.Log( "ApplyConfiguredImplantsToChest ALL "
+						+ chest.GetHashCode() + currentChestType + " " + defSet
+						+ " - Set total: " + setDef.Count
+					);
+				}
 				foreach( ChestImplanterDefinition implantDef in setDef ) {
 					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
 				}
 			}
 			
 			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
+				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+					LogHelpers.Log( "ApplyConfiguredImplantsToChest CUSTOM "
+						+ chest.GetHashCode() + currentChestType + " " + customStuffer );
+				}
 				customStuffer( currentChestType, chest );
 			}
 		}
@@ -93,8 +110,14 @@ namespace ChestImplants {
 			}
 
 			foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
-//LogHelpers.Log( "ApplyImplantToChest "+chest.GetHashCode()+currentChestType+" "+itemDef.ToString()+" - "+ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ));
-				if( ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ) ) {
+				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef );
+				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+					LogHelpers.Log( " ApplyImplantToChest "
+						+ chest.GetHashCode() + currentChestType + " " + itemDef.ToString()
+						+ " - " + canImplant
+					);
+				}
+				if( canImplant ) {
 					ChestImplanter.Implant( chest, itemDef );
 				}
 			}
@@ -158,13 +181,12 @@ namespace ChestImplants {
 
 
 		private static int GetImplantQuantity( ChestImplanterItemDefinition info ) {
-			if( (info.MaxQuantity - info.MinQuantity) == 0 ) {
+			int range = info.MaxQuantity - info.MinQuantity;
+			if( range == 0 ) {
 				return info.MinQuantity;
 			}
 
-			int range = info.MaxQuantity - info.MinQuantity;
 			UnifiedRandom rand = TmlHelpers.SafelyGetRand();
-
 			return info.MinQuantity + rand.Next( range );
 		}
 	}
