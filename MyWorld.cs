@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using HamstarHelpers.Helpers.Debug;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.World.Generation;
@@ -6,7 +8,7 @@ using Terraria.World.Generation;
 
 namespace ChestImplants {
 	class ChestStufferGenPass : GenPass {
-		public ChestStufferGenPass() : base( "ChestImplants: Stuff Chests", 1f ) { }
+		public ChestStufferGenPass() : base( "Chest Implants: Stuff Chests", 1f ) { }
 
 
 		////////////////

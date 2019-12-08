@@ -3,6 +3,7 @@ using HamstarHelpers.Helpers.Debug;
 using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Helpers.TModLoader;
+using System;
 using Terraria;
 using Terraria.Utilities;
 
@@ -92,6 +93,7 @@ namespace ChestImplants {
 			}
 
 			foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
+//LogHelpers.Log( "ApplyImplantToChest "+chest.GetHashCode()+currentChestType+" "+itemDef.ToString()+" - "+ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ));
 				if( ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef ) ) {
 					ChestImplanter.Implant( chest, itemDef );
 				}
@@ -108,18 +110,17 @@ namespace ChestImplants {
 			UnifiedRandom rand = TmlHelpers.SafelyGetRand();
 			float totalWeight = setDef.TotalWeight();
 			float randPick = rand.NextFloat() * totalWeight;
+			float countedWeights = 0;
 
-			float countedWeights = setDef[0].Weight;
-
-			int i = 0;
-			for( i = 1; i < setDef.Count; i++ ) {
-				if( countedWeights > randPick ) {
-					return setDef[ i-1 ];
-				}
+			for( int i = 0; i < setDef.Count; i++ ) {
 				countedWeights += setDef[i].Weight;
+
+				if( countedWeights > randPick ) {
+					return setDef[ i ];
+				}
 			}
 
-			LogHelpers.Warn( "Could not randomly pick from implanter set." );
+			LogHelpers.Warn( "Could not randomly pick from implanter set. Total weight "+countedWeights+" of "+setDef.Count+" implanters." );
 			return null;
 		}
 
@@ -130,15 +131,14 @@ namespace ChestImplants {
 			if( info.WallId != -1 && info.WallId != chestTile.wall ) {
 				return false;
 			}
-			return Main.rand.NextFloat() >= info.ChancePerChest;
+			return Main.rand.NextFloat() < info.ChancePerChest;
 		}
 
 
 		////////////////
 
 		public static void Implant( Chest chest, ChestImplanterItemDefinition info ) {
-			UnifiedRandom rand = TmlHelpers.SafelyGetRand();
-			int addedAmount = rand.Next( info.MinQuantity, info.MaxQuantity );
+			int addedAmount = ChestImplanter.GetImplantQuantity( info );
 			if( addedAmount == 0 ) {
 				return;
 			}
@@ -148,12 +148,24 @@ namespace ChestImplants {
 				LogHelpers.Alert( "Invalid item key " + info.ChestItem );
 				return;
 			}
-
+			
 			if( addedAmount > 0 ) {
 				ChestImplanter.PrependItemToChest( chest, itemType, addedAmount, info );
 			} else {
 				ChestImplanter.ExtractItemFromChest( chest, itemType, -addedAmount );
 			}
+		}
+
+
+		private static int GetImplantQuantity( ChestImplanterItemDefinition info ) {
+			if( (info.MaxQuantity - info.MinQuantity) == 0 ) {
+				return info.MinQuantity;
+			}
+
+			int range = info.MaxQuantity - info.MinQuantity;
+			UnifiedRandom rand = TmlHelpers.SafelyGetRand();
+
+			return info.MinQuantity + rand.Next( range );
 		}
 	}
 }

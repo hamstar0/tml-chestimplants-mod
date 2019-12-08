@@ -14,7 +14,6 @@ namespace ChestImplants {
 
 
 
-
 	public class ChestImplanterSetDefinition : List<ChestImplanterDefinition> {
 		public float TotalWeight() {
 			return this?.Sum( def => def.Weight )
@@ -55,6 +54,16 @@ namespace ChestImplants {
 
 		[DefaultValue( 0 )]
 		public int Prefix { get; set; } = 0;
+
+
+
+		////////////////
+
+		public override string ToString() {
+			return "Implanter "
+				+this.MinQuantity+":"+this.MaxQuantity
+				+" "+this.ChestItem.ToString()+"@"+this.ChancePerChest.ToString("N2");
+		}
 	}
 
 
