@@ -150,6 +150,17 @@ namespace ChestImplants {
 			yield return this.RandomPickFromSetChestImplanterDefinitions7;
 			yield return this.RandomPickFromSetChestImplanterDefinitions8;
 		}
+
+		public void ClearRandomImplanterSets() {
+			this.RandomPickFromSetChestImplanterDefinitions1.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions2.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions3.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions4.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions5.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions6.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions7.Value.Clear();
+			this.RandomPickFromSetChestImplanterDefinitions8.Value.Clear();
+		}
 	}
 }
 
