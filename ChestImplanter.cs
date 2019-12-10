@@ -1,6 +1,5 @@
 ﻿using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
-using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Helpers.TModLoader;
 using System;
@@ -53,53 +52,56 @@ namespace ChestImplants {
 			var config = ChestImplantsConfig.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string currentChestType;
-			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out currentChestType) ) {
+			string chestType;
+			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out chestType) ) {
 				throw new ModHelpersException( "Could not find chest frame" );
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
-			foreach( (string defSet, ChestImplanterSetDefinition setDef) in config.RandomPickFromSetChestImplanterDefinitions ) {
-				ChestImplanterDefinition implantDef = ChestImplanter.GetRandomImplanterFromSet( setDef );
-				
-				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-					LogHelpers.Log( "ApplyConfiguredImplantsToChest RAND "
-						+ chest.GetHashCode() + currentChestType + " " + defSet
-						+ " - Set total: " + setDef.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
-					);
-				}
-				if( implantDef != null ) {
-					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
-					break;
-				}
+			foreach( ChestImplanterSetDefinition setDef in config.GetRandomImplanterSets() ) {
+				ChestImplanter.ApplyRandomImplantsSetToChest( chest, chestType, setDef );
 			}
-			foreach( (string defSet, ChestImplanterSetDefinition setDef) in config.AllFromSetChestImplanterDefinitions ) {
-				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-					LogHelpers.Log( "ApplyConfiguredImplantsToChest ALL "
-						+ chest.GetHashCode() + currentChestType + " " + defSet
-						+ " - Set total: " + setDef.Count
-					);
-				}
-				foreach( ChestImplanterDefinition implantDef in setDef ) {
-					ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
-				}
+
+			foreach( Ref<ChestImplanterDefinition> implantDef in config.AllFromSetChestImplanterDefinitions.Value ) {
+				ChestImplanter.ApplyImplantToChest( chest, implantDef.Value, chestType );
 			}
 			
 			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
 				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 					LogHelpers.Log( "ApplyConfiguredImplantsToChest CUSTOM "
-						+ chest.GetHashCode() + currentChestType + " " + customStuffer );
+						+ chest.GetHashCode() + chestType + " " + customStuffer );
 				}
-				customStuffer( currentChestType, chest );
+				customStuffer( chestType, chest );
 			}
+		}
+
+		////
+
+		private static void ApplyRandomImplantsSetToChest(
+					Chest chest,
+					string currentChestType,
+					ChestImplanterSetDefinition setDef ) {
+			ChestImplanterDefinition implantDef = ChestImplanter.GetRandomImplanterFromSet( setDef );
+			if( implantDef == null ) {
+				return;
+			}
+
+			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+				LogHelpers.Log( "ApplyConfiguredImplantsToChest RAND "
+					+ chest.GetHashCode() + currentChestType
+					+ " - Set total: " + setDef.Value.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
+				);
+			}
+
+			ChestImplanter.ApplyImplantToChest( chest, implantDef, currentChestType );
 		}
 
 		private static void ApplyImplantToChest( Chest chest, ChestImplanterDefinition implantDef, string currentChestType ) {
 			Tile mytile = Main.tile[chest.x, chest.y];
 
 			bool isMatched = false;
-			foreach( string checkChestType in implantDef.ChestTypes ) {
-				if( ChestImplanter.IsChestMatch( currentChestType, checkChestType ) ) {
+			foreach( Ref<string> checkChestType in implantDef.ChestTypes ) {
+				if( ChestImplanter.IsChestMatch( currentChestType, checkChestType.Value ) ) {
 					isMatched = true;
 					break;
 				}
@@ -126,7 +128,7 @@ namespace ChestImplants {
 		////
 
 		private static ChestImplanterDefinition GetRandomImplanterFromSet( ChestImplanterSetDefinition setDef ) {
-			if( setDef.Count == 0 ) {
+			if( setDef.Value.Count == 0 ) {
 				return null;
 			}
 
@@ -135,15 +137,16 @@ namespace ChestImplants {
 			float randPick = rand.NextFloat() * totalWeight;
 			float countedWeights = 0;
 
-			for( int i = 0; i < setDef.Count; i++ ) {
-				countedWeights += setDef[i].Weight;
+			for( int i = 0; i < setDef.Value.Count; i++ ) {
+				countedWeights += setDef.Value[i].Value.Weight;
 
 				if( countedWeights > randPick ) {
-					return setDef[ i ];
+					return setDef.Value[ i ].Value;
 				}
 			}
 
-			LogHelpers.Warn( "Could not randomly pick from implanter set. Total weight "+countedWeights+" of "+setDef.Count+" implanters." );
+
+			LogHelpers.Warn( "Could not randomly pick from implanter set. Total weight "+countedWeights+" of "+setDef.Value.Count+" implanters." );
 			return null;
 		}
 
