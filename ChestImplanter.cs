@@ -17,31 +17,33 @@ namespace ChestImplants {
 			return true;
 		}
 
-
+		
 		public static bool IsChestMatch( string currentChestType, string matchType ) {
-			if( currentChestType != matchType ) {
-				if( matchType == "Vanilla Underground World Chest" ) {
-					switch( currentChestType ) {
-					case "Chest":
-					//case "Locked Gold Chest":
-					case "Locked Shadow Chest":
-					case "Lihzahrd Chest":
-					case "Locked Jungle Chest":
-					case "Locked Corruption Chest":
-					case "Locked Crimson Chest":
-					case "Locked Hallowed Chest":
-					case "Locked Frozen Chest":
-					case "Locked Green Dungeon Chest":
-					case "Locked Pink Dungeon Chest":
-					case "Locked Blue Dungeon Chest":
-						return false;
-					}
-				} else {
+			if( currentChestType.Equals(matchType) ) {
+				return true;
+			}
+
+			if( matchType.Equals("Vanilla Underground World Chest") ) {
+				switch( currentChestType ) {
+				case "Chest":
+				//case "Locked Gold Chest":
+				case "Locked Shadow Chest":
+				case "Lihzahrd Chest":
+				case "Locked Jungle Chest":
+				case "Locked Corruption Chest":
+				case "Locked Crimson Chest":
+				case "Locked Hallowed Chest":
+				case "Locked Frozen Chest":
+				case "Locked Green Dungeon Chest":
+				case "Locked Pink Dungeon Chest":
+				case "Locked Blue Dungeon Chest":
 					return false;
+				default:
+					return true;
 				}
 			}
 
-			return true;
+			return false;
 		}
 
 
