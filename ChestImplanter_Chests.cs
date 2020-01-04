@@ -37,30 +37,40 @@ namespace ChestImplants {
 
 		////
 
-		public static void ExtractItemFromChest( Chest chest, int itemType, int amount ) {
-			var chestList = new List<Item>( chest.item );
+		public static bool ExtractItemFromChest( Chest chest, int itemType, int amount ) {
+			var chestItems = new List<Item>( chest.item );
 
 			int foundAt = -1;
-			for( int i=0; i<chestList.Count; i++ ) {
-				if( chestList[i].type == itemType ) {
-					if( chestList[i].stack > amount ) {
-						chestList[i].stack -= amount;
-						return;
-					} else {
-						foundAt = i;
-						break;
+			for( int i=0; i<chestItems.Count; i++ ) {
+				if( chestItems[i].type == itemType ) {
+					foundAt = i;
+
+					if( chestItems[i].stack > amount ) {
+						chestItems[i].stack -= amount;
 					}
+
+					break;
 				}
 			}
 
 			if( foundAt == -1 ) {
-				//LogHelpers.LogOnce( "Could not find item "+itemType+" to extract "+amount+" of." );
-				return;
+				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+					LogHelpers.Log( "Could not find item "+itemType+" to extract "+amount+" of." );
+				}
+				return false;
 			}
 
-			for( int i=foundAt; i < chestList.Count - 1; i++ ) {
-				chestList[i] = chestList[i + 1];
+			if( chestItems[foundAt].stack <= 0 ) {
+				for( int i = foundAt; i < chestItems.Count - 2; i++ ) {
+					chestItems[i] = chestItems[i + 1];
+				}
+				chestItems[chestItems.Count - 1] = new Item();
 			}
+
+			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+				LogHelpers.Log( "Extracted " + amount + " of item type " + itemType );
+			}
+			return true;
 		}
 	}
 }

@@ -70,10 +70,12 @@ namespace ChestImplants {
 			
 			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
 				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-					LogHelpers.Log( "ApplyConfiguredImplantsToChest CUSTOM "
-						+ chest.GetHashCode() + chestType + " " + customStuffer );
+					LogHelpers.Log(
+						"ApplyConfiguredImplantsToChest CUSTOM "
+						+ chest.GetHashCode() + chestType + " " + customStuffer
+					);
 				}
-				customStuffer( chestType, chest );
+				customStuffer.Invoke( chestType, chest );
 			}
 		}
 
@@ -89,7 +91,8 @@ namespace ChestImplants {
 			}
 
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-				LogHelpers.Log( "ApplyConfiguredImplantsToChest RAND "
+				LogHelpers.Log(
+					"ApplyConfiguredImplantsToChest RAND "
 					+ chest.GetHashCode() + currentChestType
 					+ " - Set total: " + setDef.Value.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
 				);
@@ -113,16 +116,18 @@ namespace ChestImplants {
 				return;
 			}
 
-			foreach( ChestImplanterItemDefinition itemDef in implantDef.ItemDefinitions ) {
-				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( mytile, itemDef );
+			foreach( ChestImplanterItemDefinition itemImplantDef in implantDef.ItemDefinitions ) {
+				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( mytile, itemImplantDef );
 				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 					LogHelpers.Log( " ApplyImplantToChest "
-						+ chest.GetHashCode() + currentChestType + " " + itemDef.ToString()
+						+ chest.GetHashCode() + currentChestType
+						+ " - " + itemImplantDef.ToCustomString()
 						+ " - " + canImplant
+						+ " - " + ChestImplanter.GetImplantQuantity( itemImplantDef )
 					);
 				}
 				if( canImplant ) {
-					ChestImplanter.Implant( chest, itemDef );
+					ChestImplanter.Implant( chest, itemImplantDef );
 				}
 			}
 		}
