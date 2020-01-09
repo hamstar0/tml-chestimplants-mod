@@ -3,4 +3,4 @@ version = 1.1.1
 displayName = Chest Implants
 modReferences = HamstarHelpers@5.4.0
 buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
-homepage = https://github.com/hamstar0/tml-chestimplants-mod
+homepage = https://forums.terraria.org/index.php?threads/chest-implants.82681/
