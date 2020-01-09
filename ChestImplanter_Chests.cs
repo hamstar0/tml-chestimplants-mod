@@ -27,12 +27,13 @@ namespace ChestImplants {
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 				Tile mytile = Main.tile[chest.x, chest.y];
 
-				string context;
-				if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue( mytile.frameX / 36, out context ) ) {
-					throw new ModHelpersException( "Could not find chest frame" );
+				string chestName;
+				if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue( mytile.frameX / 36, out chestName ) ) {
+					chestName = "Unknown (modded?) chest";
 				}
 
-				LogHelpers.Log( " Implanted "+context+" ("+chest.x+", "+chest.y+") with "+amount+" "+info.ChestItem.ToString() );
+				LogHelpers.Log(
+					" Implanted "+chestName+" ("+chest.x+", "+chest.y+") with "+amount+" "+info.ChestItem.ToString() );
 			}
 		}
 
@@ -48,6 +49,9 @@ namespace ChestImplants {
 
 					if( chestItems[i].stack > amount ) {
 						chestItems[i].stack -= amount;
+					} else {
+						chestItems[i].active = false;
+						chestItems[i] = new Item();
 					}
 
 					break;
@@ -73,10 +77,30 @@ namespace ChestImplants {
 			}
 
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+				Tile chestTile = Main.tile[chest.x, chest.y];
+				/*int chestType = chestTile?.type ?? -1;
+				string chestName = chestType < 0
+					? "Unknown chest"
+					: chestType >= Main.tileTexture.Length
+						? TileID.Search.GetName( chestType )
+						: "Modded chest";*/
+				string chestName;
+				if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue( chestTile.frameX / 36, out chestName ) ) {
+					chestName = "Unknown (modded?) chest";
+				}
+
 				if( itemType < Main.itemTexture.Length ) {
-					LogHelpers.Log( "Extracted " + amount + " of item " + ItemID.Search.GetName(itemType) );
+					LogHelpers.Log(
+						"Extracted " + amount
+						+ " of item " + ItemID.Search.GetName(itemType)
+						+ " from chest " + chestName + " at " + chest.x + "," + chest.y
+					);
 				} else {
-					LogHelpers.Log( "Extracted " + amount + " of mod item type " + itemType );
+					LogHelpers.Log(
+						"Extracted " + amount
+						+ " of mod item type " + itemType
+						+ " from chest " + chestName + " at " + chest.x + "," + chest.y
+					);
 				}
 			}
 			return true;

@@ -1,12 +1,12 @@
-﻿using HamstarHelpers.Classes.Errors;
+﻿using System;
+using System.Linq;
+using Terraria;
+using Terraria.Utilities;
+using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
 using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Helpers.TModLoader;
-using System;
-using System.Linq;
-using Terraria;
-using Terraria.Utilities;
 
 
 namespace ChestImplants {
@@ -56,26 +56,30 @@ namespace ChestImplants {
 			var config = ChestImplantsConfig.Instance;
 
 			Tile mytile = Main.tile[ chest.x, chest.y ];
-			string chestType;
-			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out chestType) ) {
+			string chestName;
+			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out chestName) ) {
 				throw new ModHelpersException( "Could not find chest frame" );
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
 			foreach( ChestImplanterSetDefinition setDef in config.GetRandomImplanterSets() ) {
-				ChestImplanter.ApplyRandomImplantsSetToChest( chest, chestType, setDef );
+				ChestImplanter.ApplyRandomImplantsSetToChest( chest, chestName, setDef );
 			}
 
 			foreach( Ref<ChestImplanterDefinition> implantDef in config.AllFromSetChestImplanterDefinitions.Value ) {
-				ChestImplanter.ApplyImplantToChest( chest, implantDef.Value, chestType );
+				ChestImplanter.ApplyImplantToChest( chest, implantDef.Value, chestName );
 			}
 			
 			foreach( (string name, CustomChestImplanter customStuffer) in mymod.CustomImplanter ) {
 				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-					LogHelpers.Log( "ApplyAllImplantsToChest CUSTOM "+"'"+chest.GetHashCode()+" "+chestType+"' - "+name );
+					LogHelpers.Log(
+						"ApplyAllImplantsToChest CUSTOM "
+						+"'"+chest.GetHashCode()+" "+chestName+"'"
+						+"- "+name+" at "+chest.x+","+chest.y
+					);
 				}
 
-				customStuffer.Invoke( chestType, chest );
+				customStuffer.Invoke( chestName, chest );
 			}
 		}
 
@@ -93,11 +97,11 @@ namespace ChestImplants {
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 				LogHelpers.Log(
 					"ApplyConfiguredImplantsToChest RAND "
-					+ "'"+chest.GetHashCode()+" "+currentChestType+"'"
-					+ " - Set total: " + setDef.Value.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
-					+ " - " + implantDef?.ItemDefinitions.Select(
+					+ "'"+chest.GetHashCode()+" "+currentChestType+"' at "+chest.x+","+chest.y
+					//+ " - Set total: " + setDef.Value.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
+					+ " - " + string.Join( ", ", implantDef?.ItemDefinitions.Select(
 						itemDef => itemDef.ChestItem.ToString()+" ("+(int)(itemDef.ChancePerChest * 100f)+"%)"
-					)
+					) )
 				);
 			}
 
