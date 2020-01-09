@@ -18,7 +18,7 @@ namespace ChestImplants {
 				Chest mychest = Main.chest[i];
 				if( mychest == null || ChestImplanter.IsChestEmpty(mychest) ) { continue; }
 
-				ChestImplanter.ApplyConfiguredImplantsToChest( mychest );
+				ChestImplanter.ApplyAllImplantsToChest( mychest );
 
 				progress.Value = (float)i / (float)Main.chest.Length;
 			}

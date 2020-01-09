@@ -1,8 +1,10 @@
 ﻿using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.DotNET.Extensions;
 using HamstarHelpers.Helpers.Tiles;
 using HamstarHelpers.Helpers.TModLoader;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Utilities;
 
@@ -49,7 +51,7 @@ namespace ChestImplants {
 
 		////////////////
 
-		public static void ApplyConfiguredImplantsToChest( Chest chest ) {
+		public static void ApplyAllImplantsToChest( Chest chest ) {
 			var mymod = ChestImplantsMod.Instance;
 			var config = ChestImplantsConfig.Instance;
 
@@ -68,13 +70,11 @@ namespace ChestImplants {
 				ChestImplanter.ApplyImplantToChest( chest, implantDef.Value, chestType );
 			}
 			
-			foreach( CustomChestImplanter customStuffer in mymod.CustomImplanter ) {
+			foreach( (string name, CustomChestImplanter customStuffer) in mymod.CustomImplanter ) {
 				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-					LogHelpers.Log(
-						"ApplyConfiguredImplantsToChest CUSTOM "
-						+ chest.GetHashCode() + chestType + " " + customStuffer
-					);
+					LogHelpers.Log( "ApplyAllImplantsToChest CUSTOM "+"'"+chest.GetHashCode()+" "+chestType+"' - "+name );
 				}
+
 				customStuffer.Invoke( chestType, chest );
 			}
 		}
@@ -93,8 +93,11 @@ namespace ChestImplants {
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 				LogHelpers.Log(
 					"ApplyConfiguredImplantsToChest RAND "
-					+ chest.GetHashCode() + currentChestType
+					+ "'"+chest.GetHashCode()+" "+currentChestType+"'"
 					+ " - Set total: " + setDef.Value.Count + " - Items of set's pick: " + implantDef?.ItemDefinitions.Count
+					+ " - " + implantDef?.ItemDefinitions.Select(
+						itemDef => itemDef.ChestItem.ToString()+" ("+(int)(itemDef.ChancePerChest * 100f)+"%)"
+					)
 				);
 			}
 
@@ -118,7 +121,7 @@ namespace ChestImplants {
 
 			foreach( ChestImplanterItemDefinition itemImplantDef in implantDef.ItemDefinitions ) {
 				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( mytile, itemImplantDef );
-				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
+				if( ChestImplantsConfig.Instance.DebugModeVerboseInfo ) {
 					LogHelpers.Log( " ApplyImplantToChest "
 						+ chest.GetHashCode() + currentChestType
 						+ " - " + itemImplantDef.ToCustomString()

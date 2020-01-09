@@ -1,5 +1,6 @@
 using HamstarHelpers.Helpers.TModLoader.Mods;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -24,7 +25,7 @@ namespace ChestImplants {
 
 		////////////////
 
-		internal ISet<CustomChestImplanter> CustomImplanter { get; } = new HashSet<CustomChestImplanter>();
+		internal IDictionary<string, CustomChestImplanter> CustomImplanter { get; } = new ConcurrentDictionary<string, CustomChestImplanter>();
 
 
 

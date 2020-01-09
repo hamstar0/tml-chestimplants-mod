@@ -29,6 +29,7 @@ namespace ChestImplants {
 		////////////////
 
 		public bool DebugModeInfo = false;
+		public bool DebugModeVerboseInfo = false;
 
 		public ChestImplanterSetDefinition AllFromSetChestImplanterDefinitions { get; set; } =
 			new ChestImplanterSetDefinition( new List<Ref<ChestImplanterDefinition>>{

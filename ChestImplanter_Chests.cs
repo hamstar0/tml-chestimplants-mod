@@ -1,8 +1,9 @@
-﻿using HamstarHelpers.Classes.Errors;
+﻿using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
 using HamstarHelpers.Helpers.Tiles;
-using System.Collections.Generic;
-using Terraria;
 
 
 namespace ChestImplants {
@@ -31,7 +32,7 @@ namespace ChestImplants {
 					throw new ModHelpersException( "Could not find chest frame" );
 				}
 
-				LogHelpers.Log( "Implanted " + context + " ("+chest.x+", "+chest.y+") with " + amount + " " + info.ChestItem.ToString() );
+				LogHelpers.Log( " Implanted "+context+" ("+chest.x+", "+chest.y+") with "+amount+" "+info.ChestItem.ToString() );
 			}
 		}
 
@@ -54,8 +55,12 @@ namespace ChestImplants {
 			}
 
 			if( foundAt == -1 ) {
-				if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-					LogHelpers.Log( "Could not find item "+itemType+" to extract "+amount+" of." );
+				if( ChestImplantsConfig.Instance.DebugModeVerboseInfo ) {
+					if( itemType < Main.itemTexture.Length ) {
+						LogHelpers.Log( "Could not find item "+ItemID.Search.GetName(itemType)+" to extract "+amount+" of." );
+					} else {
+						LogHelpers.Log( "Could not find mod item "+itemType+" to extract "+amount+" of." );
+					}
 				}
 				return false;
 			}
@@ -68,7 +73,11 @@ namespace ChestImplants {
 			}
 
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
-				LogHelpers.Log( "Extracted " + amount + " of item type " + itemType );
+				if( itemType < Main.itemTexture.Length ) {
+					LogHelpers.Log( "Extracted " + amount + " of item " + ItemID.Search.GetName(itemType) );
+				} else {
+					LogHelpers.Log( "Extracted " + amount + " of mod item type " + itemType );
+				}
 			}
 			return true;
 		}
