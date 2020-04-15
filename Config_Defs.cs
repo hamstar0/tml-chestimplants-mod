@@ -27,7 +27,9 @@ namespace ChestImplants {
 
 
 
+
 	public class ChestImplanterDefinition {
+		[Label( "Implanter priority weight (random set only)" )]
 		[Range( 0f, 1f )]
 		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float Weight { get; set; }
@@ -47,6 +49,7 @@ namespace ChestImplants {
 		[DefaultValue( -1 )]
 		public int WallId { get; set; } = -1;
 
+		[Label( "Percent chance of this item, per chest" )]
 		[Range( 0f, 1f )]
 		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float ChancePerChest { get; set; } = 1f;
