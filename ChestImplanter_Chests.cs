@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using HamstarHelpers.Classes.Errors;
 using HamstarHelpers.Helpers.Debug;
@@ -11,7 +10,7 @@ namespace ChestImplants {
 		public static void PrependItemToChest( Chest chest, int itemType, int amount, int prefix=0 ) {
 			// Shift items up
 			for( int i = chest.item.Length - 1; i > 0; i-- ) {
-				chest.item[i - 1] = chest.item[i];
+				chest.item[i] = chest.item[i-1];
 			}
 
 			// Insert new item
@@ -40,24 +39,25 @@ namespace ChestImplants {
 		////
 
 		public static bool ExtractItemFromChest( Chest chest, int itemType, int amount ) {
-			var chestItems = new List<Item>( chest.item );
-
+			// Trim from the first discovered stack of the given item type until the subtraction amount is met
 			int foundAt = -1;
-			for( int i=0; i<chestItems.Count; i++ ) {
-				if( chestItems[i].type == itemType ) {
-					foundAt = i;
-
-					if( chestItems[i].stack > amount ) {
-						chestItems[i].stack -= amount;
-					} else {
-						chestItems[i].active = false;
-						chestItems[i] = new Item();
-					}
-
-					break;
+			for( int i=0; i<chest.item.Length; i++ ) {
+				if( chest.item[i]?.type != itemType ) {
+					continue;
 				}
+
+				foundAt = i;
+
+				if( chest.item[i].stack > amount ) {
+					chest.item[i].stack -= amount;
+				} else {
+					chest.item[i].active = false;
+					chest.item[i] = new Item();
+				}
+				break;
 			}
 
+			// No items found to extract?
 			if( foundAt == -1 ) {
 				if( ChestImplantsConfig.Instance.DebugModeVerboseInfo ) {
 					if( itemType < Main.itemTexture.Length ) {
@@ -69,13 +69,15 @@ namespace ChestImplants {
 				return false;
 			}
 
-			if( chestItems[foundAt].stack <= 0 ) {
-				for( int i = foundAt; i < chestItems.Count - 2; i++ ) {
-					chestItems[i] = chestItems[i + 1];
+			// Shift existing chest items down to fill the empty item slot (if empty, due to extraction)
+			if( chest.item[foundAt].stack <= 0 ) {
+				for( int i = foundAt; i < chest.item.Length - 2; i++ ) {
+					chest.item[i] = chest.item[i + 1];
 				}
-				chestItems[chestItems.Count - 1] = new Item();
+				chest.item[chest.item.Length - 1] = new Item();
 			}
 
+			// Debugging's a bitch
 			if( ChestImplantsConfig.Instance.DebugModeInfo ) {
 				Tile chestTile = Main.tile[chest.x, chest.y];
 				/*int chestType = chestTile?.type ?? -1;
@@ -103,6 +105,7 @@ namespace ChestImplants {
 					);
 				}
 			}
+
 			return true;
 		}
 	}

@@ -1,9 +1,9 @@
-using HamstarHelpers.Helpers.TModLoader.Mods;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
+using HamstarHelpers.Helpers.TModLoader.Mods;
 
 
 namespace ChestImplants {
@@ -25,7 +25,8 @@ namespace ChestImplants {
 
 		////////////////
 
-		internal IDictionary<string, CustomChestImplanter> CustomImplanter { get; } = new ConcurrentDictionary<string, CustomChestImplanter>();
+		internal IDictionary<string, CustomChestImplanter> CustomImplanter { get; }
+			= new ConcurrentDictionary<string, CustomChestImplanter>();
 
 
 
@@ -48,7 +49,7 @@ namespace ChestImplants {
 		////////////////
 
 		public override object Call( params object[] args ) {
-			return ModBoilerplateHelpers.HandleModCall( typeof( ChestImplantsAPI ), args );
+			return ModBoilerplateHelpers.HandleModCall( typeof(ChestImplantsAPI), args );
 		}
 	}
 }

@@ -60,21 +60,23 @@ namespace ChestImplants {
 			} );
 
 		public ChestImplanterSetDefinition RandomPickFromSetChestImplanterDefinitions1 { get; set; } =
-			new ChestImplanterSetDefinition( new List<Ref<ChestImplanterDefinition>>{
-				new Ref<ChestImplanterDefinition>( new ChestImplanterDefinition {
-					Weight = 1f,
-					ChestTypes = new List<Ref<string>> { new Ref<string>("Web Covered Chest") },
-					ItemDefinitions = new List<ChestImplanterItemDefinition> {
-						new ChestImplanterItemDefinition {
-							ChestItem = new ItemDefinition( ItemID.Silk ),
-							WallId = WallID.SpiderUnsafe,
-							ChancePerChest = 1f,
-							MinQuantity = 99,
-							MaxQuantity = 99
+			new ChestImplanterSetDefinition(
+				new List<Ref<ChestImplanterDefinition>>{
+					new Ref<ChestImplanterDefinition>( new ChestImplanterDefinition {
+						Weight = 1f,
+						ChestTypes = new List<Ref<string>> { new Ref<string>("Web Covered Chest") },
+						ItemDefinitions = new List<ChestImplanterItemDefinition> {
+							new ChestImplanterItemDefinition {
+								ChestItem = new ItemDefinition( ItemID.Silk ),
+								WallId = WallID.SpiderUnsafe,
+								ChancePerChest = 1f,
+								MinQuantity = 99,
+								MaxQuantity = 99
+							}
 						}
-					}
-				} )
-			} );
+					} )
+				}
+			);
 
 		public ChestImplanterSetDefinition RandomPickFromSetChestImplanterDefinitions2 { get; set; } = new ChestImplanterSetDefinition();
 

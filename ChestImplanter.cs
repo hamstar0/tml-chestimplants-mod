@@ -55,17 +55,20 @@ namespace ChestImplants {
 			var mymod = ChestImplantsMod.Instance;
 			var config = ChestImplantsConfig.Instance;
 
-			Tile mytile = Main.tile[ chest.x, chest.y ];
+			// Get chest tile and name
+			Tile chestTile = Main.tile[ chest.x, chest.y ];
 			string chestName;
-			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(mytile.frameX / 36, out chestName) ) {
+			if( !TileFrameHelpers.VanillaChestTypeNamesByFrame.TryGetValue(chestTile.frameX / 36, out chestName) ) {
 				throw new ModHelpersException( "Could not find chest frame" );
 			}
 //LogHelpers.Log("chest "+i+" pos:"+mychest.x+","+mychest.y+", frame:"+(mytile.frameX/36)+", wall:"+mytile.wall+" "+(mychest.item[0]!=null?mychest.item[0].Name:"..."));
 			
+			// Apply random implants
 			foreach( ChestImplanterSetDefinition setDef in config.GetRandomImplanterSets() ) {
 				ChestImplanter.ApplyRandomImplantsSetToChest( chest, chestName, setDef );
 			}
 
+			// Apply guaranteed implants
 			foreach( Ref<ChestImplanterDefinition> implantDef in config.AllFromSetChestImplanterDefinitions.Value ) {
 				ChestImplanter.ApplyImplantToChest( chest, implantDef.Value, chestName );
 			}
@@ -109,8 +112,9 @@ namespace ChestImplants {
 		}
 
 		private static void ApplyImplantToChest( Chest chest, ChestImplanterDefinition implantDef, string currentChestType ) {
-			Tile mytile = Main.tile[chest.x, chest.y];
+			Tile chestTile = Main.tile[chest.x, chest.y];
 
+			// Check if chest type is recognized by the given implanter
 			bool isMatched = false;
 			foreach( Ref<string> checkChestType in implantDef.ChestTypes ) {
 				if( ChestImplanter.IsChestMatch( currentChestType, checkChestType.Value ) ) {
@@ -119,12 +123,14 @@ namespace ChestImplants {
 				}
 			}
 
+			// Guess not?
 			if( !isMatched ) {
 				return;
 			}
 
+			// Implant each item (item-implanter willing)
 			foreach( ChestImplanterItemDefinition itemImplantDef in implantDef.ItemDefinitions ) {
-				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( mytile, itemImplantDef );
+				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( chestTile, itemImplantDef );
 				if( ChestImplantsConfig.Instance.DebugModeVerboseInfo ) {
 					LogHelpers.Log( " ApplyImplantToChest "
 						+ chest.GetHashCode() + currentChestType
@@ -133,6 +139,7 @@ namespace ChestImplants {
 						+ " - " + ChestImplanter.GetImplantQuantity( itemImplantDef )
 					);
 				}
+
 				if( canImplant ) {
 					ChestImplanter.Implant( chest, itemImplantDef );
 				}
@@ -158,7 +165,6 @@ namespace ChestImplants {
 					return setDef.Value[ i ].Value;
 				}
 			}
-
 
 			LogHelpers.Warn( "Could not randomly pick from implanter set. Total weight "+countedWeights+" of "+setDef.Value.Count+" implanters." );
 			return null;
@@ -189,6 +195,7 @@ namespace ChestImplants {
 				return;
 			}
 			
+			// Add or remove quantity of item, according to implanter spec
 			if( addedAmount > 0 ) {
 				ChestImplanter.PrependItemToChest( chest, itemType, addedAmount, info );
 			} else {
