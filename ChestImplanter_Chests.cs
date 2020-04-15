@@ -8,14 +8,25 @@ using HamstarHelpers.Helpers.Tiles;
 namespace ChestImplants {
 	public partial class ChestImplanter {
 		public static void PrependItemToChest( Chest chest, int itemType, int amount, int prefix=0 ) {
+			if( amount <= 0 ) {
+				throw new ModHelpersException( "Invalid item stack amount (type "+itemType+")." );
+			}
+
+			int lastIdx = chest.item.Length - 1;
+
+			if( chest.item[lastIdx]?.active == true ) {
+				LogHelpers.Warn( "Chest full; " + chest.item[lastIdx].HoverName + " lost." );
+			}
+
 			// Shift items up
-			for( int i = chest.item.Length - 1; i > 0; i-- ) {
+			for( int i = lastIdx; i > 0; i-- ) {
 				chest.item[i] = chest.item[i-1];
 			}
 
 			// Insert new item
 			chest.item[0] = new Item();
 			chest.item[0].SetDefaults( itemType );
+			chest.item[0].active = true;
 			chest.item[0].stack = amount;
 			chest.item[0].prefix = (byte)prefix;
 		}

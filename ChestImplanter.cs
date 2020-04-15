@@ -131,6 +131,7 @@ namespace ChestImplants {
 			// Implant each item (item-implanter willing)
 			foreach( ChestImplanterItemDefinition itemImplantDef in implantDef.ItemDefinitions ) {
 				bool canImplant = ChestImplanter.CanChestAcceptImplantItem( chestTile, itemImplantDef );
+
 				if( ChestImplantsConfig.Instance.DebugModeVerboseInfo ) {
 					LogHelpers.Log( " ApplyImplantToChest "
 						+ chest.GetHashCode() + currentChestType
@@ -198,8 +199,10 @@ namespace ChestImplants {
 			// Add or remove quantity of item, according to implanter spec
 			if( addedAmount > 0 ) {
 				ChestImplanter.PrependItemToChest( chest, itemType, addedAmount, info );
-			} else {
+			} else if( addedAmount < 0 ) {
 				ChestImplanter.ExtractItemFromChest( chest, itemType, -addedAmount );
+			} else {
+				throw new ModHelpersException( "Invalid quantity." );
 			}
 		}
 
