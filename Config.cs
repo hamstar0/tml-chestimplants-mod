@@ -25,11 +25,11 @@ namespace ChestImplants {
 
 		////////////////
 
-		[Label( "Chest implanters define a list of items to add or remove (via. negative stack size) from chests."
+		[Header( "Chest implanters define a list of items to add or remove (via. negative stack size) from chests."
 			+"\n \nUse the random lists options for random implanters to be picked (as opposed to random chance per item)."
 			+"\n \nItem implanters can specify their item's likeliness of being implanted/extracted."
 			+"\n \nItem implanters choose their quantity between a minimum and maximum value."
-			+"\n \n \n \n" )]
+			+"\n \n \n " )]
 		public bool DebugModeInfo = false;
 		
 		public bool DebugModeVerboseInfo = false;
