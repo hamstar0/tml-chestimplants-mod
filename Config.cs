@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using HamstarHelpers.Classes.UI.ModConfig;
-using HamstarHelpers.Services.Configs;
 
 
 namespace ChestImplants {
@@ -12,8 +12,8 @@ namespace ChestImplants {
 
 
 
-	public class ChestImplantsConfig : StackableModConfig {
-		public static ChestImplantsConfig Instance => ModConfigStack.GetMergedConfigs<ChestImplantsConfig>();
+	public partial class ChestImplantsConfig : ModConfig {
+		public static ChestImplantsConfig Instance => ModContent.GetInstance<ChestImplantsConfig>();
 
 
 
@@ -107,53 +107,6 @@ namespace ChestImplants {
 		[Label( "Chest implanters list (random implanter per chest 8)" )]
 		public ChestImplanterSetDefinition RandomPickFromSetChestImplanterDefinitions8 { get; set; } = new ChestImplanterSetDefinition();
 
-
-
-		////////////////
-
-		public override void OverlayChanges( StackableModConfig changes ) {
-			var mychanges = (ChestImplantsConfig)changes;
-
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.AllFromSetChestImplanterDefinitions.Value ) {
-				this.AllFromSetChestImplanterDefinitions.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions1.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions1.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions2.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions2.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions3.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions3.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions4.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions4.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions5.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions5.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions6.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions6.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions7.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions7.Value.Add( implanter );
-			}
-			foreach( Ref<ChestImplanterDefinition> implanter in mychanges.RandomPickFromSetChestImplanterDefinitions8.Value ) {
-				this.RandomPickFromSetChestImplanterDefinitions8.Value.Add( implanter );
-			}
-
-			mychanges.AllFromSetChestImplanterDefinitions = this.AllFromSetChestImplanterDefinitions;
-			mychanges.RandomPickFromSetChestImplanterDefinitions1 = this.RandomPickFromSetChestImplanterDefinitions1;
-			mychanges.RandomPickFromSetChestImplanterDefinitions2 = this.RandomPickFromSetChestImplanterDefinitions2;
-			mychanges.RandomPickFromSetChestImplanterDefinitions3 = this.RandomPickFromSetChestImplanterDefinitions3;
-			mychanges.RandomPickFromSetChestImplanterDefinitions4 = this.RandomPickFromSetChestImplanterDefinitions4;
-			mychanges.RandomPickFromSetChestImplanterDefinitions5 = this.RandomPickFromSetChestImplanterDefinitions5;
-			mychanges.RandomPickFromSetChestImplanterDefinitions6 = this.RandomPickFromSetChestImplanterDefinitions6;
-			mychanges.RandomPickFromSetChestImplanterDefinitions7 = this.RandomPickFromSetChestImplanterDefinitions7;
-			mychanges.RandomPickFromSetChestImplanterDefinitions8 = this.RandomPickFromSetChestImplanterDefinitions8;
-
-			base.OverlayChanges( changes );
-		}
 
 
 		////////////////

@@ -68,6 +68,9 @@ namespace ChestImplants {
 				ChestImplanter.ApplyRandomImplantsSetToChest( chest, chestName, setDef );
 			}
 
+			//string propName = nameof( ChestImplantsConfig.AllFromSetChestImplanterDefinitions );
+			//var chestImplantDefs = config.Get<ChestImplanterSetDefinition>( propName );
+
 			// Apply guaranteed implants
 			foreach( Ref<ChestImplanterDefinition> implantDef in config.AllFromSetChestImplanterDefinitions.Value ) {
 				ChestImplanter.ApplyImplantToChest( chest, implantDef.Value, chestName );
