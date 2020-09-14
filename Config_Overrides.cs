@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using HamstarHelpers.Classes.UI.ModConfig;
+using HamstarHelpers.Classes.Errors;
+using HamstarHelpers.Helpers.DotNET.Reflection;
 
 
 namespace ChestImplants {
