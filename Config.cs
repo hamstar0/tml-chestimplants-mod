@@ -112,25 +112,25 @@ namespace ChestImplants {
 		////////////////
 
 		public IEnumerable<ChestImplanterSetDefinition> GetRandomImplanterSets() {
-			yield return this.RandomPickFromSetChestImplanterDefinitions1;
-			yield return this.RandomPickFromSetChestImplanterDefinitions2;
-			yield return this.RandomPickFromSetChestImplanterDefinitions3;
-			yield return this.RandomPickFromSetChestImplanterDefinitions4;
-			yield return this.RandomPickFromSetChestImplanterDefinitions5;
-			yield return this.RandomPickFromSetChestImplanterDefinitions6;
-			yield return this.RandomPickFromSetChestImplanterDefinitions7;
-			yield return this.RandomPickFromSetChestImplanterDefinitions8;
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions1) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions2) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions3) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions4) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions5) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions6) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions7) );
+			yield return this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions8) );
 		}
 
 		public void ClearRandomImplanterSets() {
-			this.RandomPickFromSetChestImplanterDefinitions1.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions2.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions3.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions4.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions5.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions6.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions7.Value.Clear();
-			this.RandomPickFromSetChestImplanterDefinitions8.Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions1) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions2) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions3) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions4) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions5) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions6) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions7) ).Value.Clear();
+			this.Get<ChestImplanterSetDefinition>( nameof(this.RandomPickFromSetChestImplanterDefinitions8) ).Value.Clear();
 		}
 	}
 }
